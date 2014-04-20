@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="tmp_photo_height">110dip</dimen>
+    <dimen name="tmp_photo_width">77dip</dimen>
+    <dimen name="member_photo_height">95dip</dimen>
+    <dimen name="member_photo_width">68dip</dimen>
+    <dimen name="present_photo_height">170dip</dimen>
+    <dimen name="present_photo_width">240dip</dimen>
+
+</resources>

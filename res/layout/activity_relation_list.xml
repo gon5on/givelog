@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/style_bg"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dip"
+        android:background="@color/header" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp" >
+
+            <Button
+                android:id="@+id/buttonAdd"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/icon_add" />
+
+            <Button
+                android:id="@+id/buttonReturn"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/icon_return" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="140dp"
+            android:layout_height="34dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="3dp"
+            android:paddingLeft="10dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/logo2" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/listViewRelation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@drawable/style_dash_line"
+        android:dividerHeight="3sp" />
+
+</LinearLayout>

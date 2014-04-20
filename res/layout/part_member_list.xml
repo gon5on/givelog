@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android1="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayoutBg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android1:background="@drawable/style_list_bg" >
+
+    <TextView
+        android1:id="@+id/textViewRelation"
+        android1:layout_width="match_parent"
+        android1:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="10dip"
+        android1:layout_marginLeft="10dip"
+        android1:background="@drawable/style_relation_label"
+        android1:paddingBottom="3dip"
+        android1:paddingLeft="5dip"
+        android1:paddingRight="5dip"
+        android1:paddingTop="3dip"
+        android1:text="小学校時代の友達"
+        android1:textAppearance="?android:attr/textAppearanceSmall"
+        android1:textColor="@color/white" />
+
+    <LinearLayout
+        android1:id="@+id/linearLayoutName"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content"
+        android1:layout_margin="10dip"
+        android:orientation="horizontal" >
+
+        <TextView
+            android1:id="@+id/textViewPoint"
+            android1:layout_width="wrap_content"
+            android1:layout_height="wrap_content"
+            android1:layout_marginLeft="5dip"
+            android1:layout_marginRight="5dip"
+            android1:background="@drawable/style_relation_label"
+            android1:paddingBottom="3dip"
+            android1:paddingLeft="5dip"
+            android1:paddingRight="5dip"
+            android1:paddingTop="3dip"
+            android1:textAppearance="?android:attr/textAppearanceMedium"
+            android1:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android1:layout_marginLeft="5dip"
+            android1:layout_marginRight="10dip"
+            android:text="山田太郎"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android1:textColor="@color/gray"
+            android1:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textBirthday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android1:text="2012/09/20 (20歳)"
+            android1:textColor="@color/right_gray" />
+    </LinearLayout>
+
+</LinearLayout>

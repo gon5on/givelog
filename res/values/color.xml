@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#666666</color>
+    <color name="right_gray">#999999</color>
+    <color name="disable">#CCCCCC</color>
+    <color name="red">#ff3333</color>
+    <color name="base">#98defc</color>
+    <color name="splash_bg">#98defc</color>
+    <color name="header">#98defc</color>
+    <color name="list_selected">#fde7fa</color>
+    <color name="clear">#000000ff</color>
+    <color name="label_default">#93e0fc</color>
+    <color name="label_on">#7dc9d7</color>
+    <color name="photo_bg">#e5f8ff</color>
+    <color name="button">#fb9555</color>
+    <color name="button_grade">#ffba55</color>
+    <color name="button2">#fc8080</color>
+    <color name="button_grade2">#fd9999</color>
+    <color name="button_disable2">#33ff5555</color>
+    <color name="button3">#bbbbbb</color>
+    <color name="button_grade3">#cccccc</color>
+    <color name="button4">#52b7ff</color>
+    <color name="button_grade4">#4fcdff</color>
+    <color name="group1">#0097c3</color>
+    <color name="group2">#94c130</color>
+    <color name="group3">#8ac2b0</color>
+    <color name="group4">#9d6585</color>
+    <color name="group5">#ec6a60</color>
+    <color name="group6">#fda099</color>
+    <color name="group7">#f8ac33</color>
+    <color name="group8">#b06b3c</color>
+    <color name="group9">#777777</color>
+
+</resources>
