@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import jp.co.e2.givelog.R;
-import jp.co.e2.givelog.common.Config;
 import jp.co.e2.givelog.common.ImgUtils;
 import jp.co.e2.givelog.common.Utils;
+import jp.co.e2.givelog.config.Config;
 import jp.co.e2.givelog.dialog.ErrorDialog;
 import jp.co.e2.givelog.dialog.PersonAddDialog;
 import jp.co.e2.givelog.dialog.PhotoSelectDialog;
-import jp.co.e2.givelog.model.Member;
+import jp.co.e2.givelog.entity.MemberEntity;
+import jp.co.e2.givelog.entity.PresentEntity;
 import jp.co.e2.givelog.model.MemberDao;
-import jp.co.e2.givelog.model.Present;
 import jp.co.e2.givelog.model.PresentDao;
 import jp.co.e2.givelog.validate.Validate;
 import android.app.AlertDialog;
@@ -41,7 +41,7 @@ import android.widget.TextView;
  */
 public class PresentAddActivity extends BaseActivity
 {
-	private static ArrayList<Member> members;				//人物オブジェクト配列
+	private static ArrayList<MemberEntity> members;				//人物オブジェクト配列
 	private static String[] member_from_items;				//だれから文字列格納配列
 	private static String[] member_to_items;				//だれへ文字列格納配列
 
@@ -193,7 +193,7 @@ public class PresentAddActivity extends BaseActivity
 		//データ取得
 		SQLiteDatabase db = helper.getWritableDatabase();
 		PresentDao presentDao = new PresentDao(getApplicationContext());
-		Present present = presentDao.selectPresentData(db, id);
+		PresentEntity present = presentDao.selectPresentData(db, id);
 
 		ArrayList<Integer> from = presentDao.selectFromList(db, id);
 		ArrayList<Integer> to = presentDao.selectToList(db, id);
@@ -300,7 +300,7 @@ public class PresentAddActivity extends BaseActivity
 
 		for (int i = 0; i < saved.size(); i++) {
 			for (int j = 0; j < member_items.length; j++) {
-				Member tmp = members.get(j);
+				MemberEntity tmp = members.get(j);
 
 				if (saved.get(i) == tmp.getId()) {
 					check_list[j] = true;

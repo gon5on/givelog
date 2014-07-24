@@ -3,7 +3,7 @@ package jp.co.e2.givelog.adapter;
 import java.util.ArrayList;
 
 import jp.co.e2.givelog.R;
-import jp.co.e2.givelog.model.Relation;
+import jp.co.e2.givelog.entity.RelationEntity;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -17,7 +17,7 @@ import android.widget.TextView;
  * 
  * @access public
  */
-public class RelationListAdapter extends ArrayAdapter<Relation>
+public class RelationListAdapter extends ArrayAdapter<RelationEntity>
 {
 	private LayoutInflater inflater;
 	private View convertView;
@@ -29,7 +29,7 @@ public class RelationListAdapter extends ArrayAdapter<Relation>
 	 * @param Integer layoutId
 	 * @param List<Member> objects
 	 */
-	public RelationListAdapter(Context context, int layoutId, ArrayList<Relation> objects)
+	public RelationListAdapter(Context context, int layoutId, ArrayList<RelationEntity> objects)
 	{
 		super(context, 0, objects);
 		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -48,7 +48,7 @@ public class RelationListAdapter extends ArrayAdapter<Relation>
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		// 特定の行(position)のデータを得る
-		Relation item = getItem(position);
+		RelationEntity item = getItem(position);
 
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.part_relation_list, null);

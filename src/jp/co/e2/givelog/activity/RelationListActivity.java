@@ -9,7 +9,7 @@ import jp.co.e2.givelog.dialog.ColorPickerDialog;
 import jp.co.e2.givelog.dialog.ConfirmDialog;
 import jp.co.e2.givelog.dialog.ErrorDialog;
 import jp.co.e2.givelog.dialog.RelationDialog;
-import jp.co.e2.givelog.model.Relation;
+import jp.co.e2.givelog.entity.RelationEntity;
 import jp.co.e2.givelog.model.RelationDao;
 import jp.co.e2.givelog.validate.Validate;
 import android.database.sqlite.SQLiteDatabase;
@@ -36,7 +36,7 @@ public class RelationListActivity extends BaseActivity
 	private static ColorPickerDialog color_dialog;		//カラーピッカーダイアログ
 
 	private static RelationDao relationDao;				//グループDao
-	private static ArrayList<Relation> relations;		//グループ一覧
+	private static ArrayList<RelationEntity> relations;		//グループ一覧
 
 	private static Integer selected_position;			//選択済ポジション
 	private static Integer selected_color;				//カラーピッカー選択済み色
@@ -123,7 +123,7 @@ public class RelationListActivity extends BaseActivity
 		selected_position = position;
 
 		//Relationクラス取得
-		Relation selectedRelation = (Relation) relations.get(selected_position);
+		RelationEntity selectedRelation = (RelationEntity) relations.get(selected_position);
 		selected_color = selectedRelation.getLabel();
 
 		//名称と色をセット
@@ -277,7 +277,7 @@ public class RelationListActivity extends BaseActivity
 		}
 		//変更の場合
 		else {
-			Relation item = new Relation();
+			RelationEntity item = new RelationEntity();
 			item.setId(relations.get(position).getId());
 			item.setName(name);
 			item.setLabel(color);

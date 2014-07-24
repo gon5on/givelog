@@ -2,269 +2,257 @@ package jp.co.e2.givelog.model;
 
 import java.util.ArrayList;
 
+import jp.co.e2.givelog.entity.MemberEntity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 /**
  * Memberテーブルのデータアクセスオブジェクト
  * 
  * @access public
  */
-public class MemberDao
+public class MemberDao extends AppDao
 {
-	private Context context;				//コンテキスト
-	private long inserted_id;				// インサート時のID
+    // テーブル名
+    public static final String TABLE_NAME = "member";
 
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context context コンテキスト
-	 * @access public
-	 */
-	public MemberDao(Context context)
-	{
-		this.context = context;
-	}
+    // カラム名
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_KANA = "kana";
+    public static final String COLUMN_BIRTHDAY = "birthday";
+    public static final String COLUMN_RELATION_ID = "relation_id";
+    public static final String COLUMN_PHOTO = "photo";
+    public static final String COLUMN_MEMO = "memo";
 
-	/**
-	 * テーブル作成
-	 * 
-	 * @param SQLiteDatabase db データベースオブジェクト
-	 * @return void
-	 * @access public
-	 */
-	public void createTable(SQLiteDatabase db)
-	{
-		String sql = "CREATE TABLE member (" +
-				"id          INTEGER PRIMARY KEY AUTOINCREMENT," +
-				"name        TEXT," +
-				"kana        TEXT," +
-				"birthday    TEXT," +
-				"relation_id INTEGER," +
-				"photo       INTEGER," +
-				"memo        TEXT" +
-				")";
-		db.execSQL(sql);
-	}
+    private long mInsertedId;                                           // インサート時のID
 
-	/**
-	 * 人物一覧取得
-	 * 
-	 * @param SQLiteDatabase db データベースオブジェクト
-	 * @return ArrayList<Member> list 人物クラスの配列
-	 * @access public
-	 */
-	public ArrayList<Member> selectMemberList(SQLiteDatabase db)
-	{
-		ArrayList<Member> list = new ArrayList<Member>();
+    /**
+     * テーブル作成
+     * 
+     * @param SQLiteDatabase db データベースオブジェクト
+     * @return void
+     * @access public
+     */
+    public void createTable(SQLiteDatabase db)
+    {
+        String sql = "CREATE TABLE " + TABLE_NAME + " (" +
+                COLUMN_ID + "               INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COLUMN_NAME + "             TEXT," +
+                COLUMN_KANA + "             TEXT," +
+                COLUMN_BIRTHDAY + "         TEXT," +
+                COLUMN_RELATION_ID + "      INTEGER," +
+                COLUMN_PHOTO + "            INTEGER," +
+                COLUMN_MEMO + "             TEXT" +
+                ")";
+        db.execSQL(sql);
+    }
 
-		try {
-			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT * FROM member LEFT JOIN relation ON member.relation_id = relation.id ORDER BY relation.sort, relation.id, member.kana ASC");
+    /**
+     * 人物一覧取得
+     * 
+     * @param SQLiteDatabase db データベースオブジェクト
+     * @return ArrayList<Member> list 人物クラスの配列
+     * @access public
+     */
+    public ArrayList<MemberEntity> selectMemberList(SQLiteDatabase db)
+    {
+        ArrayList<MemberEntity> list = new ArrayList<MemberEntity>();
 
-			Cursor cursor = db.rawQuery(sql.toString(), null);
+        String sql = String.format("SELECT * FROM %s ", TABLE_NAME);
+        sql += String.format("LEFT JOIN %s ON ", RelationDao.TABLE_NAME);
+        sql += String.format("%s.%s = %s.%s ",
+                TABLE_NAME, COLUMN_RELATION_ID, RelationDao.TABLE_NAME, RelationDao.COLUMN_ID);
+        sql += String.format("ORDER BY %s.%s, %s.%s, %s.%s ASC",
+                RelationDao.TABLE_NAME, RelationDao.COLUMN_SORT, RelationDao.TABLE_NAME,
+                RelationDao.COLUMN_ID, TABLE_NAME, COLUMN_KANA);
 
-			Integer relation_id = 0;	//関係性が前と変わったかどうか確認用変数
+        Cursor cursor = db.rawQuery(sql, null);
 
-			while (cursor.moveToNext()) {
-				//関係性ラベルの場合
-				if (cursor.getInt(4) != relation_id) {
-					Member member = new Member();
-					member.setRelationName(cursor.getString(8));
-					member.setLabel(cursor.getInt(9));
-					list.add(member);
-				}
+        Integer relationId = 0;         //関係性が前と変わったかどうか確認用変数
 
-				Member member = new Member();
-				member.setId(cursor.getInt(0));
-				member.setName(cursor.getString(1));
-				member.setBirth(cursor.getString(3));
-				member.setRelationId(cursor.getInt(4));
-				member.setLabel(cursor.getInt(9));
+        if (cursor.moveToFirst()) {
+            do {
+                //関係性が変わった場合は、関係性ラベルを追加
+                if (cursor.getInt(4) != relationId) {
+                    MemberEntity member = new MemberEntity();
+                    member.setRelationName(getString(cursor, RelationDao.COLUMN_NAME));
+                    member.setLabel(getInteger(cursor, RelationDao.COLUMN_LABEL));
+                    list.add(member);
+                }
 
-				list.add(member);
+                MemberEntity member = new MemberEntity();
+                member.setId(getInteger(cursor, COLUMN_ID));
+                member.setName(getString(cursor, COLUMN_NAME));
+                member.setBirth(getString(cursor, COLUMN_BIRTHDAY));
+                member.setRelationId(getInteger(cursor, COLUMN_RELATION_ID));
+                member.setLabel(getInteger(cursor, RelationDao.COLUMN_LABEL));
 
-				relation_id = member.getRelationId();
-			}
+                list.add(member);
 
-			cursor.close();
-		} catch (Exception ex) {
-			Log.v("MemberDao.selectMemberList", ex.toString());
-		}
+                relationId = member.getRelationId();
+            } while (cursor.moveToNext());
+        }
 
-		return list;
-	}
+        cursor.close();
 
-	/**
-	 * 人物取得
-	 * 
-	 * @param SQLiteDatabase db データベースオブジェクト
-	 * @param Integer id メンバーID
-	 * @return Member メンバークラス
-	 * @access public
-	 */
-	public Member selectMemberDetail(SQLiteDatabase db, int id)
-	{
-		Member member = new Member();
+        return list;
+    }
 
-		try {
-			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT * FROM member LEFT JOIN relation ON member.relation_id = relation.id WHERE member.id = " + id);
+    /**
+     * 人物取得
+     * 
+     * @param SQLiteDatabase db データベースオブジェクト
+     * @param Integer id メンバーID
+     * @return Member メンバーオブジェクト
+     * @access public
+     */
+    public MemberEntity selectMemberDetail(SQLiteDatabase db, int id)
+    {
+        MemberEntity member = new MemberEntity();
 
-			Cursor cursor = db.rawQuery(sql.toString(), null);
+        String sql = String.format("SELECT * FROM %s ", TABLE_NAME);
+        sql += String.format("LEFT JOIN %s ", RelationDao.TABLE_NAME);
+        sql += String.format("ON %s.%s = %s.%s ",
+                TABLE_NAME, COLUMN_RELATION_ID, RelationDao.TABLE_NAME, RelationDao.COLUMN_ID);
+        sql += String.format("WHERE %s.%s = ?", TABLE_NAME, COLUMN_ID);
 
-			while (cursor.moveToNext()) {
-				member.setId(cursor.getInt(0));
-				member.setName(cursor.getString(1));
-				member.setKana(cursor.getString(2));
-				member.setBirth(cursor.getString(3));
-				member.setRelationId(cursor.getInt(4));
-				member.setPhoto(cursor.getInt(5));
-				member.setMemo(cursor.getString(6));
-				member.setRelationName(cursor.getString(8));
-				member.setLabel(cursor.getInt(9));
-			}
+        String[] param = { Integer.toString(id) };
 
-			cursor.close();
-		} catch (Exception ex) {
-			Log.v("MemberDao.selectMemberDetail", ex.toString());
-		}
+        Cursor cursor = db.rawQuery(sql, param);
 
-		return member;
-	}
+        if (cursor.moveToFirst()) {
+            do {
+                member.setId(getInteger(cursor, COLUMN_ID));
+                member.setName(getString(cursor, COLUMN_NAME));
+                member.setKana(getString(cursor, COLUMN_KANA));
+                member.setBirth(getString(cursor, COLUMN_BIRTHDAY));
+                member.setRelationId(getInteger(cursor, COLUMN_RELATION_ID));
+                member.setPhoto(getInteger(cursor, COLUMN_PHOTO));
+                member.setMemo(getString(cursor, COLUMN_MEMO));
+                member.setRelationName(getString(cursor, RelationDao.COLUMN_NAME));
+                member.setLabel(getInteger(cursor, RelationDao.COLUMN_LABEL));
+            } while (cursor.moveToNext());
+        }
 
-	/**
-	 * 名前とIDのメンバークラス配列を返す
-	 * 
-	 * @param SQLiteDatabase db データベースオブジェクト
-	 * @return ArrayList<Member> 名前とIDのメンバークラス配列
-	 * @access public
-	 */
-	public ArrayList<Member> selectMemberIdNameList(SQLiteDatabase db)
-	{
-		ArrayList<Member> list = new ArrayList<Member>();
+        cursor.close();
 
-		try {
-			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT * FROM member ORDER BY kana");
+        return member;
+    }
 
-			Cursor cursor = db.rawQuery(sql.toString(), null);
+    /**
+     * 名前とIDのメンバークラス配列を返す
+     * 
+     * @param SQLiteDatabase db データベースオブジェクト
+     * @return ArrayList<Member> 名前とIDのメンバークラス配列
+     * @access public
+     */
+    public ArrayList<MemberEntity> selectMemberIdNameList(SQLiteDatabase db)
+    {
+        ArrayList<MemberEntity> list = new ArrayList<MemberEntity>();
 
-			while (cursor.moveToNext()) {
-				Member member = new Member();
-				member.setId(cursor.getInt(0));
-				member.setName(cursor.getString(1));
+        String sql = String.format("SELECT * FROM %s ORDER BY %s", TABLE_NAME, COLUMN_KANA);
 
-				list.add(member);
-			}
+        Cursor cursor = db.rawQuery(sql, null);
 
-			cursor.close();
-		} catch (Exception ex) {
-			Log.v("MemberDao.selectMemberIdNameList", ex.toString());
-		}
+        if (cursor.moveToFirst()) {
+            do {
+                MemberEntity member = new MemberEntity();
+                member.setId(getInteger(cursor, COLUMN_ID));
+                member.setName(getString(cursor, COLUMN_NAME));
 
-		return list;
-	}
+                list.add(member);
+            } while (cursor.moveToNext());
+        }
 
-	/**
-	 * メンバークラス配列をスピナー用に成形する
-	 * 
-	 * @param ArrayList<Member> items メンバークラス配列
-	 * @return String[] スピナー用のメンバー配列
-	 * @access public
-	 */
-	public String[] getMemberSpinnerList(ArrayList<Member> items)
-	{
-		ArrayList<String> list = new ArrayList<String>();
+        cursor.close();
 
-		for (int i = 0; i < items.size(); i++) {
-			Member item = items.get(i);
-			list.add(item.getName());
-		}
+        return list;
+    }
 
-		list.add("カスタム(自由記入)");
+    /**
+     * メンバークラス配列をスピナー用に成形する
+     * 
+     * @param ArrayList<Member> items メンバークラス配列
+     * @return String[] スピナー用のメンバー配列
+     * @access public
+     */
+    public String[] getMemberSpinnerList(ArrayList<MemberEntity> items)
+    {
+        ArrayList<String> list = new ArrayList<String>();
 
-		return (String[]) list.toArray(new String[0]);
-	}
+        for (int i = 0; i < items.size(); i++) {
+            MemberEntity item = items.get(i);
+            list.add(item.getName());
+        }
 
-	/**
-	 * 保存
-	 * 
-	 * @param SQLiteDatabase db データベースオブジェクト
-	 * @param Integer id
-	 * @param String name
-	 * @param String kana
-	 * @param String birthday
-	 * @param Integer relation_id
-	 * @param String photo
-	 * @param String memo
-	 * @return boolen 成功/失敗
-	 * @access public
-	 */
-	public Boolean save(SQLiteDatabase db, Integer id, String name, String kana, String birthday, int relation_id, Integer photo, String memo)
-	{
-		try {
-			ContentValues cv = new ContentValues();
-			cv.put("name", name);
-			cv.put("kana", kana);
-			cv.put("birthday", birthday);
-			cv.put("relation_id", relation_id);
-			cv.put("photo", photo);
-			cv.put("memo", memo);
+        list.add("カスタム(自由記入)");
 
-			if (id == 0) {
-				inserted_id = db.insert("member", "", cv);
-			} else {
-				db.update("member", cv, "id=?", new String[] { Integer.toString(id) });
-			}
-		} catch (Exception ex) {
-			Log.v("MemberDao.save", ex.toString());
-		} finally {
-			//db.close();
-		}
+        return (String[]) list.toArray(new String[0]);
+    }
 
-		return true;
-	}
+    /**
+     * 保存
+     * 
+     * @param SQLiteDatabase db データベースオブジェクト
+     * @param MemberEntity data
+     * @return boolen 成功/失敗
+     * @access public
+     */
+    public Boolean save(SQLiteDatabase db, MemberEntity data)
+    {
+        long ret = 0;
 
-	/**
-	 * メンバー削除
-	 * 
-	 * @param SQLiteDatabase db データベースオブジェクト
-	 * @param String file_dir 画像ファイル名
-	 * @param Integer id メンバーID
-	 * @param String name メンバー名
-	 * @return boolean 成功/失敗
-	 * @access public
-	 */
-	public Boolean delete(SQLiteDatabase db, String file_dir, Integer id, String name)
-	{
-		try {
-			//メンバー削除
-			db.delete("member", "id=?", new String[] { Integer.toString(id) });
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, data.getName());
+        cv.put(COLUMN_KANA, data.getKana());
+        cv.put(COLUMN_BIRTHDAY, data.getBirth());
+        cv.put(COLUMN_RELATION_ID, data.getRelationId());
+        cv.put(COLUMN_PHOTO, data.getPhoto());
+        cv.put(COLUMN_MEMO, data.getMemo());
 
-			//削除対象メンバーが含まれている人物データにひと手間加える
-			PersonDao personDao = new PersonDao(context);
-			personDao.slideMemberIdToName(db, id, name, file_dir);
-		} catch (Exception ex) {
-			Log.v("MemberDao.delete", ex.toString());
-		} finally {
-			//db.close();
-		}
+        if (data.getId() == null || data.getId() == 0) {
+            ret = db.insert(TABLE_NAME, "", cv);
+            mInsertedId = ret;
+        } else {
+            String[] param = { Integer.toString(data.getId()) };
+            db.update(TABLE_NAME, cv, COLUMN_ID + " = ?", param);
+        }
 
-		return true;
-	}
+        return (ret != -1) ? true : false;
+    }
 
-	/**
-	 * インサートしたIDを返す
-	 * 
-	 * @return Integer インサートしたID
-	 * @access public
-	 */
-	public Integer getInsertedId()
-	{
-		return Integer.valueOf(String.valueOf(inserted_id));
-	}
+    /**
+     * メンバー削除
+     * 
+     * @param SQLiteDatabase db データベースオブジェクト
+     * @param String fileDir 画像ファイル名
+     * @param Integer id メンバーID
+     * @param String name メンバー名
+     * @return boolean 成功/失敗
+     * @access public
+     */
+    public Boolean delete(SQLiteDatabase db, String fileDir, Integer id, String name)
+    {
+        //メンバー削除
+        long ret = db.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[] { Integer.toString(id) });
+
+        //削除対象メンバーが含まれている人物データにひと手間加える
+        PersonDao personDao = new PersonDao();
+        Boolean ret2 = personDao.slideMemberIdToName(db, id, name, fileDir);
+
+        return (ret != -1 && ret2 == true) ? true : false;
+    }
+
+    /**
+     * インサートしたIDを返す
+     * 
+     * @return Integer インサートしたID
+     * @access public
+     */
+    public Integer getInsertedId()
+    {
+        return Integer.valueOf(String.valueOf(mInsertedId));
+    }
 }

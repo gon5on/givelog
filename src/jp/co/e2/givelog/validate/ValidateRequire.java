@@ -1,121 +1,217 @@
 package jp.co.e2.givelog.validate;
 
 /**
- * 必須チェッククラス
+ * 必須バリデーションクラス
  * 
+ * validate … バリデートクラス
  * value … バリデート対象の値
  * name … 値の名前（誕生日、性別とか）
- * msg_full … デフォルトではないエラーメッセージを使用したい場合に指定
+ * msgFull … デフォルトではないエラーメッセージを使用したい場合に指定
  */
 public class ValidateRequire
 {
-	Validate validate;		//バリデーションクラス
+    public static final String ERROR_MSG_REQUIRE = "%sを入力してください。";
+    public static final String ERROR_MSG_REQUIRE_SELECT = "%sを選択してください。";
 
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Validate validate バリデーションクラス
-	 */
-	public ValidateRequire(Validate validate)
-	{
-		this.validate = validate;
-	}
+    /**
+     * String型必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param String value 値
+     * @param String name 変数名
+     * @param String msgFull エラーメッセージ全文
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, String value, String name, String msgFull)
+    {
+        if (validate.getResult(value) == false) {
+            return;
+        }
+        if (value == null || value.length() == 0) {
+            setErrorMsg(validate, name, msgFull);
+        }
+    }
 
-	/**
-	 * String型必須チェック
-	 * 
-	 * @param String value 値
-	 * @param String name 変数名
-	 * @param String msg_full エラーメッセージ全文
-	 * @return void
-	 * @access public
-	 */
-	public void check(String value, String name, String msg_full)
-	{
-		if (validate.getValueResult() == false) {
-			return;
-		}
-		if (value == null || value.length() == 0) {
-			if (msg_full.length() != 0) {
-				validate.error(msg_full);
-			} else {
-				validate.error(name + "を入力してください。");
-			}
-		}
-	}
+    /**
+     * String型必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param String value 値
+     * @param String name 変数名
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, String value, String name)
+    {
+        check(validate, value, name, null);
+    }
 
-	/**
-	 * Int型必須チェック
-	 * 
-	 * @param Int value 値
-	 * @param String name 変数名
-	 * @param String msg_full エラーメッセージ全文
-	 * @return void
-	 * @access public
-	 */
-	public void check(Integer value, String name, String msg_full)
-	{
-		if (validate.getValueResult() == false) {
-			return;
-		}
-		if (value == null) {
-			if (msg_full.length() != 0) {
-				validate.error(msg_full);
-			} else {
-				validate.error(name + "を入力してください。");
-			}
-		}
-	}
+    /**
+     * Int型必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param Int value 値
+     * @param String name 変数名
+     * @param String msg_full エラーメッセージ全文
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, Integer value, String name, String msgFull)
+    {
+        if (validate.getResult(name) == false) {
+            return;
+        }
+        if (value == null) {
+            setErrorMsg(validate, name, msgFull);
+        }
+    }
 
-	/**
-	 * Float型必須チェック
-	 * 
-	 * @param Float value 値
-	 * @param String name 変数名
-	 * @param String msg_full エラーメッセージ全文
-	 * @return void
-	 * @access public
-	 */
-	public void check(Float value, String name, String msg_full)
-	{
-		if (validate.getValueResult() == false) {
-			return;
-		}
-		if (value == null) {
-			if (msg_full.length() != 0) {
-				validate.error(msg_full);
-			} else {
-				validate.error(name + "を入力してください。");
-			}
-		}
-	}
+    /**
+     * Int型必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param Int value 値
+     * @param String name 変数名
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, Integer value, String name)
+    {
+        check(validate, value, name, null);
+    }
 
-	/**
-	 * セレクトボックス必須チェック
-	 * 
-	 * @param boolean[] value 値
-	 * @param String name 変数名
-	 * @param String msg_full エラーメッセージ全文
-	 * @return void
-	 * @access public
-	 */
-	public void check(boolean[] value, String name, String msg_full)
-	{
-		Boolean flg = false;
+    /**
+     * Double型必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param Double value 値
+     * @param String name 変数名
+     * @param String msg_full エラーメッセージ全文
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, Double value, String name, String msgFull)
+    {
+        if (validate.getResult(name) == false) {
+            return;
+        }
+        if (value == null) {
+            setErrorMsg(validate, name, msgFull);
+        }
+    }
 
-		for (int i = 0; i < value.length; i++) {
-			if (value[i] == true) {
-				flg = true;
-				break;
-			}
-		}
+    /**
+     * Double型必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param Double value 値
+     * @param String name 変数名
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, Double value, String name)
+    {
+        check(validate, value, name, null);
+    }
 
-		if (flg == false) {
-			if (msg_full.length() != 0) {
-				validate.error(msg_full);
-			} else {
-				validate.error(name + "を入力してください。");
-			}
-		}
-	}
+    /**
+     * Float型必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param Float value 値
+     * @param String name 変数名
+     * @param String msgFull エラーメッセージ全文
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, Float value, String name, String msgFull)
+    {
+        if (validate.getResult(name) == false) {
+            return;
+        }
+        if (value == null) {
+            setErrorMsg(validate, name, msgFull);
+        }
+    }
+
+    /**
+     * Float型必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param Float value 値
+     * @param String name 変数名
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, Float value, String name)
+    {
+        check(validate, value, name, null);
+    }
+
+    /**
+     * セレクトボックス必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param boolean[] value 値
+     * @param String name 変数名
+     * @param String msgFull エラーメッセージ全文
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, boolean[] value, String name, String msgFull)
+    {
+        if (validate.getResult(name) == false) {
+            return;
+        }
+
+        Boolean flg = false;
+
+        for (int i = 0; i < value.length; i++) {
+            if (value[i] == true) {
+                flg = true;
+                break;
+            }
+        }
+
+        if (flg == false) {
+            if (msgFull != null) {
+                validate.error(name, msgFull);
+            } else {
+                validate.error(name, String.format(ERROR_MSG_REQUIRE, name));
+            }
+        }
+    }
+
+    /**
+     * セレクトボックス必須チェック
+     * 
+     * @param Validate validate バリデートクラス
+     * @param boolean[] value 値
+     * @param String name 変数名
+     * @return void
+     * @access public
+     */
+    public static void check(Validate validate, boolean[] value, String name)
+    {
+        check(validate, value, name, null);
+    }
+
+    /**
+     * エラーメッセージセット
+     * 
+     * @param Validate validate バリデートクラス
+     * @param String name 変数名
+     * @param String msgFull エラーメッセージ全文
+     * @return void
+     * @access private
+     */
+    private static void setErrorMsg(Validate validate, String name, String msgFull)
+    {
+        if (msgFull != null) {
+            validate.error(name, msgFull);
+        } else {
+            validate.error(name, String.format(ERROR_MSG_REQUIRE, name));
+        }
+    }
 }

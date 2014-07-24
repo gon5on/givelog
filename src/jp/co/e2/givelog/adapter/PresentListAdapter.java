@@ -3,7 +3,7 @@ package jp.co.e2.givelog.adapter;
 import java.util.ArrayList;
 
 import jp.co.e2.givelog.R;
-import jp.co.e2.givelog.model.Present;
+import jp.co.e2.givelog.entity.PresentEntity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +16,7 @@ import android.widget.TextView;
  * 
  * @access public
  */
-public class PresentListAdapter extends ArrayAdapter<Present>
+public class PresentListAdapter extends ArrayAdapter<PresentEntity>
 {
 	private LayoutInflater inflater;
 	private View convertView;
@@ -30,7 +30,7 @@ public class PresentListAdapter extends ArrayAdapter<Present>
 	 * @param Integer layoutId
 	 * @param List<Member> objects
 	 */
-	public PresentListAdapter(Context context, int layoutId, ArrayList<Present> objects)
+	public PresentListAdapter(Context context, int layoutId, ArrayList<PresentEntity> objects)
 	{
 		super(context, 0, objects);
 		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -49,7 +49,7 @@ public class PresentListAdapter extends ArrayAdapter<Present>
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		// 特定の行(position)のデータを得る
-		Present item = getItem(position);
+		PresentEntity item = getItem(position);
 
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.part_present_list, null);

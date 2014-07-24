@@ -2,7 +2,7 @@ package jp.co.e2.givelog.dialog;
 
 import jp.co.e2.givelog.R;
 import jp.co.e2.givelog.common.ImgUtils;
-import jp.co.e2.givelog.model.Present;
+import jp.co.e2.givelog.entity.PresentEntity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
@@ -51,11 +51,11 @@ public class PresentDetailDialog extends Dialog
 	/**
 	 * プレゼント情報を画面にセットする
 	 * 
-	 * @param Present present プレゼントクラス
+	 * @param PresentEntity present プレゼントクラス
 	 * @return void
 	 * @access public
 	 */
-	public void setContent(final Present present)
+	public void setContent(final PresentEntity present)
 	{
 		//日付とイベント
 		TextView textViewDate = (TextView) findViewById(R.id.textViewDate);

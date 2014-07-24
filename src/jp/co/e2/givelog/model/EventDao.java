@@ -1,7 +1,7 @@
 package jp.co.e2.givelog.model;
 
+import jp.co.e2.givelog.entity.EventEntity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -9,56 +9,52 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @access public
  */
-public class EventDao
+public class EventDao extends AppDao
 {
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context context コンテキスト
-	 * @access public
-	 */
-	public EventDao(Context context)
-	{
-	}
+    //テーブル名
+    public static final String TABLE_NAME = "event";
 
-	/**
-	 * テーブル作成
-	 * 
-	 * @param SQLiteDatabase db データベースオブジェクト
-	 * @return void
-	 * @access public
-	 */
-	public void createTable(SQLiteDatabase db)
-	{
-		String sql = "CREATE TABLE event (" +
-				"id    INTEGER PRIMARY KEY AUTOINCREMENT," +
-				"name  TEXT" +
-				")";
-		db.execSQL(sql);
-	}
+    //カラム名
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NAME = "name";
 
-	/**
-	 * 保存処理
-	 * 
-	 * @param SQLiteDatabase db データベースオブジェクト
-	 * @param Integer id イベントID
-	 * @param String name イベント名
-	 * @return boolean 成功/失敗
-	 */
-	public Boolean save(SQLiteDatabase db, Integer id, String name)
-	{
-		try {
-			ContentValues cv = new ContentValues();
-			cv.put("name", name);
+    /**
+     * テーブル作成
+     * 
+     * @param SQLiteDatabase db データベースオブジェクト
+     * @return void
+     * @access public
+     */
+    public void createTable(SQLiteDatabase db)
+    {
+        String sql = "CREATE TABLE " + TABLE_NAME + " (" +
+                COLUMN_ID + "    INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COLUMN_NAME + "  TEXT" +
+                ")";
+        db.execSQL(sql);
+    }
 
-			if (id == 0) {
-				db.insert("event", "", cv);
-			} else {
-				db.update("event", cv, "id=?", new String[] { Integer.toString(id) });
-			}
-		} catch (Exception ex) {
-		}
+    /**
+     * 保存処理
+     * 
+     * @param SQLiteDatabase db データベースオブジェクト
+     * @param Event data イベントオブジェクト
+     * @return boolean 成功/失敗
+     */
+    public Boolean save(SQLiteDatabase db, EventEntity data) throws Exception
+    {
+        long ret = 0;
 
-		return true;
-	}
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, data.getName());
+
+        if (data.getId() == 0 || data.getId() == null) {
+            ret = db.insert(TABLE_NAME, "", cv);
+        } else {
+            String[] param = { Integer.toString(data.getId()) };
+            ret = db.update(TABLE_NAME, cv, COLUMN_ID + " = ?", param);
+        }
+
+        return (ret != -1) ? true : false;
+    }
 }

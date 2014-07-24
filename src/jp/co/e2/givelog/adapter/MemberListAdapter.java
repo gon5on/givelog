@@ -3,7 +3,7 @@ package jp.co.e2.givelog.adapter;
 import java.util.List;
 
 import jp.co.e2.givelog.R;
-import jp.co.e2.givelog.model.Member;
+import jp.co.e2.givelog.entity.MemberEntity;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -18,7 +18,7 @@ import android.widget.TextView;
  * 
  * @access public
  */
-public class MemberListAdapter extends ArrayAdapter<Member>
+public class MemberListAdapter extends ArrayAdapter<MemberEntity>
 {
 	private LayoutInflater inflater;
 
@@ -29,7 +29,7 @@ public class MemberListAdapter extends ArrayAdapter<Member>
 	 * @param Integer layoutId
 	 * @param List<Member> objects
 	 */
-	public MemberListAdapter(Context context, int layoutId, List<Member> objects)
+	public MemberListAdapter(Context context, int layoutId, List<MemberEntity> objects)
 	{
 		super(context, 0, objects);
 		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -48,7 +48,7 @@ public class MemberListAdapter extends ArrayAdapter<Member>
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		// 特定の行(position)のデータを得る
-		Member item = getItem(position);
+		MemberEntity item = getItem(position);
 
 		convertView = inflater.inflate(R.layout.part_member_list, null);
 
@@ -111,7 +111,7 @@ public class MemberListAdapter extends ArrayAdapter<Member>
 	@Override
 	public boolean isEnabled(int position)
 	{
-		Member item = getItem(position);
+		MemberEntity item = getItem(position);
 
 		if (item.getRelationName() != null) {
 			return false;
