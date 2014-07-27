@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @access
  */
-public class RelationDao extends AppDao
+public class RelationDao extends BaseDao
 {
     // テーブル名
     public static final String TABLE_NAME = "relation";

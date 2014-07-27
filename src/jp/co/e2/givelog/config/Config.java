@@ -21,9 +21,9 @@ public class Config
     public static final Integer RESIZE_WIDTH = 800;
     public static final Integer RESIZE_HEIGHT = 800;
 
-    //あげた・もらったフラグ
-    public static final Integer GIVE_FLG = 1;                           //あげた
-    public static final Integer GAVE_FLG = 2;                           //もらった
+    //あげた・もらったタイプ
+    public static final Integer GIVE_TYPE = 1;                          //あげた
+    public static final Integer GAVE_TYPE = 2;                          //もらった
 
     //画像tmpフォルダ名
     public static final String TMP_DIR_NAME = "tmp";
@@ -95,14 +95,14 @@ public class Config
     /**
      * 画像ファイル名を生成
      * 
-     * @param Context context
+     * @param Integer flg
+     * @param Integer id
      * @return String
-     * @throws IOException
      */
     public static String getImgFileName(Integer flg, Integer id)
     {
-        String path = (flg == PRESENT_IMG_FLG) ? PRESENT_IMG_PREFIX : MEMBER_IMG_PREFIX;
-        path += "_" + id + ".jpg";
+        String prefix = (flg == PRESENT_IMG_FLG) ? PRESENT_IMG_PREFIX : MEMBER_IMG_PREFIX;
+        String path = prefix + "_" + id + ".jpg";
 
         return path;
     }

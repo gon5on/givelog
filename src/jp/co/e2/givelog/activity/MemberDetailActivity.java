@@ -6,24 +6,26 @@ import jp.co.e2.givelog.R;
 import jp.co.e2.givelog.adapter.PresentListAdapter;
 import jp.co.e2.givelog.common.AndroidUtils;
 import jp.co.e2.givelog.common.ImgUtils;
-import jp.co.e2.givelog.dialog.ConfirmDialog;
-import jp.co.e2.givelog.dialog.MemoDialog;
+import jp.co.e2.givelog.common.MediaUtils;
+import jp.co.e2.givelog.config.Config;
 import jp.co.e2.givelog.dialog.PresentDetailDialog;
 import jp.co.e2.givelog.entity.MemberEntity;
 import jp.co.e2.givelog.entity.PresentEntity;
+import jp.co.e2.givelog.model.BaseSQLiteOpenHelper;
 import jp.co.e2.givelog.model.MemberDao;
 import jp.co.e2.givelog.model.PresentDao;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,30 +36,12 @@ import android.widget.TextView;
  */
 public class MemberDetailActivity extends BaseActivity
 {
-    private static PresentListAdapter adapter;			//アダプタ－
-
-    private static PresentDetailDialog detail_dialog;	//詳細ダイアログ
-    private static ConfirmDialog member_del_dialog;		//人物削除確認ダイアログ
-    private static ConfirmDialog present_del_dialog;	//プレゼント削除確認ダイアログ
-    private static MemoDialog memo_dialog;				//メモダイアログ
-
-    private static MemberDao memberDao;					//メンバーDao
-    private static PresentDao presentDao;				//プレセントDao
-
-    private static MemberEntity member;						//対象のMemberデータ
-    private static ArrayList<PresentEntity> presents;			//対象のプレゼントデータ
-    private static Integer member_id;					//人物ID
-    private static Integer present_id;					//選択されたプレゼントID
-    private static Integer position;					//選択されたポジション
-
-    private static Integer type;						//あげるかもらうかフラグ
-
     /**
      * onCreate
      * 
      * @param Bundle savedInstanceState
      * @return void
-     * @access public
+     * @access protected
      */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -65,280 +49,19 @@ public class MemberDetailActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member_detail);
 
-        //初期化
-        setNull();
+        Integer memberId = (Integer) getIntent().getIntExtra("MEMBER_ID", 0);
 
         //ヘッダのボタンセット
-        setHeaderButton();
+        setHeaderButton(memberId);
 
-        //引数のID取得
-        Intent i = getIntent();
-        member_id = i.getIntExtra("ID", 0);
-    }
+        if (savedInstanceState == null) {
+            MemberDetailFragment fragment = new MemberDetailFragment();
+            Bundle args = new Bundle();
+            args.putInt("MEMBER_ID", memberId);
+            fragment.setArguments(args);
 
-    /**
-     * onResume
-     * 
-     * @return void
-     * @access public
-     */
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-
-        //人物情報取得
-        SQLiteDatabase db = helper.getWritableDatabase();
-        memberDao = new MemberDao();
-        member = memberDao.selectMemberDetail(db, member_id);
-        db.close();
-
-        //人物情報をビューにセット
-        setMemberData();
-
-        //背景画像消える対策
-        ListView listViewPresent = (ListView) findViewById(R.id.listViewPresent);
-        listViewPresent.setScrollingCacheEnabled(false);
-
-        //プレゼント情報取得、ビューにセット
-        setPresentData();
-
-        //あげるボタンセット
-        Button buttonGive = (Button) findViewById(R.id.buttonGive);
-        buttonGive.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                type = 1;
-                setPresentData();
-                setTab();
-            }
-        });
-
-        //もらうボタンセット
-        Button buttonGave = (Button) findViewById(R.id.buttonGave);
-        buttonGave.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                type = 2;
-                setPresentData();
-                setTab();
-            }
-        });
-    }
-
-    /**
-     * onDestroy
-     * 
-     * @return void
-     * @access protected
-     */
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-
-        //初期化
-        setNull();
-    }
-
-    /**
-     * 人物情報をビューにセット
-     * 
-     * @return void
-     * @access private
-     */
-    private void setMemberData()
-    {
-        //写真セット
-        if (member.getPhoto() != null) {
-            Resources res = getResources();
-            Integer height = res.getDimensionPixelSize(R.dimen.tmp_photo_height);
-            Integer width = res.getDimensionPixelSize(R.dimen.tmp_photo_width);
-
-            String img_path = file_dir + "/" + member.getPhoto();
-            ImgUtils imgUtils = new ImgUtils(getApplicationContext(), img_path);
-
-            ImageView imageViewPhoto = (ImageView) findViewById(R.id.imageViewPhoto);
-            imageViewPhoto.setImageBitmap(imgUtils.getResizeImg(height, width));
-            imageViewPhoto.setEnabled(true);
-
-            //タップ時の画像拡大
-            imageViewPhoto.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    Intent i = new Intent(getApplicationContext(), ShowPhotoActivity.class);
-                    i.putExtra("PHOTO", member.getPhoto());
-                    startActivity(i);
-                }
-            });
-        } else {
-            ImageView imageViewPhoto = (ImageView) findViewById(R.id.imageViewPhoto);
-            imageViewPhoto.setImageResource(R.drawable.no_image);
-            imageViewPhoto.setEnabled(false);
+            getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
         }
-
-        //名前
-        TextView textViewName = (TextView) findViewById(R.id.textViewName);
-        textViewName.setText(member.getName());
-
-        //ふりがな
-        TextView textViewKana = (TextView) findViewById(R.id.textViewKana);
-
-        if (member.getKana().length() != 0) {
-            textViewKana.setText(member.getKana());
-            textViewKana.setVisibility(View.VISIBLE);
-        } else {
-            textViewKana.setVisibility(View.GONE);
-        }
-
-        //関係性
-        TextView textViewRelation = (TextView) findViewById(R.id.textViewRelation);
-        textViewRelation.setText(member.getRelationName());
-
-        GradientDrawable shape = (GradientDrawable) textViewRelation.getBackground();
-        textViewRelation.setBackgroundDrawable(shape);
-        shape.setColor(member.getLabel());
-
-        //誕生日
-        TextView textViewBirth = (TextView) findViewById(R.id.textViewBirth);
-
-        if (member.getBirth() != null) {
-            textViewBirth.setText(member.getBirthAge());
-            textViewBirth.setVisibility(View.VISIBLE);
-        } else {
-            textViewBirth.setVisibility(View.GONE);
-        }
-
-        //メモ
-        memo_dialog = new MemoDialog(this, member.getMemo());
-        Button buttonMemo = (Button) findViewById(R.id.buttonMemo);
-
-        if (member.getMemo().length() != 0) {
-            buttonMemo.setVisibility(View.VISIBLE);
-            buttonMemo.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    memo_dialog.show();
-                }
-            });
-        } else {
-            buttonMemo.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * プレゼント情報取得、ビューにセット
-     * 
-     * @return void
-     * @access private
-     */
-    private void setPresentData()
-    {
-        //プレゼントデータ取得
-        SQLiteDatabase db = helper.getWritableDatabase();
-        presentDao = new PresentDao();
-        presents = presentDao.selectPresentList(db, member_id, type);
-        db.close();
-
-        //プレゼント情報をビューにセット
-        ListView listViewPresent = (ListView) findViewById(R.id.listViewPresent);
-
-        adapter = new PresentListAdapter(this, R.layout.part_present_list, presents);
-        adapter.setType(type);
-
-        listViewPresent.setAdapter(adapter);
-
-        //イベントリスナーセット
-        listViewPresent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int l_position, long id) {
-                position = l_position;
-                present_id = presents.get(position).getId();
-                showDetailDialog();
-            }
-        });
-    }
-
-    /**
-     * タブの見た目を切り替える
-     * 
-     * @return void
-     * @access private
-     */
-    private void setTab()
-    {
-        LinearLayout layout_on;
-        LinearLayout layout_off;
-
-        if (type == 1) {
-            layout_on = (LinearLayout) findViewById(R.id.linearLayoutGive);
-            layout_off = (LinearLayout) findViewById(R.id.linearLayoutGave);
-
-        } else {
-            layout_on = (LinearLayout) findViewById(R.id.linearLayoutGave);
-            layout_off = (LinearLayout) findViewById(R.id.linearLayoutGive);
-
-        }
-
-        layout_on.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_on));
-        layout_off.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_off));
-    }
-
-    /**
-     * 編集処理
-     * 
-     * @return void
-     * @access private
-     */
-    private void editPresent()
-    {
-        Intent intent = new Intent(MemberDetailActivity.this, PresentAddActivity.class);
-        intent.putExtra("ID", present_id);
-        startActivity(intent);
-
-        detail_dialog.dismiss();
-    }
-
-    /**
-     * 人物削除処理
-     * 
-     * @return void
-     * @access private
-     */
-    private void deleteMember()
-    {
-        //DB削除
-        SQLiteDatabase db = helper.getWritableDatabase();
-        memberDao.delete(db, file_dir, member_id, member.getName());
-        db.close();
-
-        //画像削除
-        deleteImg(member_id, "member");
-
-        member_del_dialog.dismiss();
-
-        AndroidUtils.showToastL(getApplication(), "削除しました。");
-        finish();
-    }
-
-    /**
-     * プレゼント削除
-     * 
-     * @return void
-     * @access private
-     */
-    private void deletePresent()
-    {
-        //DB削除
-        SQLiteDatabase db = helper.getWritableDatabase();
-        presentDao.delete(db, present_id);
-        db.close();
-
-        //画像削除
-        deleteImg(present_id, "present");
-
-        //表示更新
-        adapter.remove(presents.get(position));
-
-        present_del_dialog.dismiss();
-        detail_dialog.dismiss();
-
-        AndroidUtils.showToastL(getApplication(), "削除しました。");
     }
 
     /**
@@ -347,7 +70,7 @@ public class MemberDetailActivity extends BaseActivity
      * @return void
      * @access private
      */
-    private void setHeaderButton()
+    private void setHeaderButton(final Integer memberId)
     {
         //戻る
         Button buttonReturn = (Button) findViewById(R.id.buttonReturn);
@@ -361,7 +84,7 @@ public class MemberDetailActivity extends BaseActivity
         Button buttonDelete = (Button) findViewById(R.id.buttonDelete);
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                showMemberDeleteDialog();
+                //TODO 削除ダイアログ
             }
         });
 
@@ -369,8 +92,8 @@ public class MemberDetailActivity extends BaseActivity
         Button buttonEdit = (Button) findViewById(R.id.buttonEdit);
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MemberAddActivity.class);
-                intent.putExtra("ID", member.getId());
+                Intent intent = new Intent(MemberDetailActivity.this, MemberAddActivity.class);
+                intent.putExtra("MEMBER_ID", memberId);
                 startActivity(intent);
             }
         });
@@ -379,8 +102,8 @@ public class MemberDetailActivity extends BaseActivity
         Button buttonPresentAdd = (Button) findViewById(R.id.buttonPresentAdd);
         buttonPresentAdd.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), PresentAddActivity.class);
-                i.putExtra("MEMBER_ID", member_id);
+                Intent i = new Intent(MemberDetailActivity.this, PresentAddActivity.class);
+                i.putExtra("MEMBER_ID", memberId);
                 i.putExtra("TYPE", type);
                 startActivity(i);
             }
@@ -388,111 +111,390 @@ public class MemberDetailActivity extends BaseActivity
     }
 
     /**
-     * 詳細ダイアログを開く
+     * MemberDetailFragment
      * 
-     * @return void
-     * @access private
+     * @access public
      */
-    private void showDetailDialog()
+    public static class MemberDetailFragment extends Fragment
     {
-        if (detail_dialog == null) {
-            detail_dialog = new PresentDetailDialog(this, file_dir);
+        private View mView = null;
 
-            //編集ボタン
-            Button detailButtonEdit = (Button) detail_dialog.findViewById(R.id.buttonEdit);
-            detailButtonEdit.setOnClickListener(new View.OnClickListener() {
+        private Integer mMemberId;                              //メンバーID
+        private Integer mType = Config.GIVE_TYPE;               //あげる・もらうフラグ
+        private Integer mPresentId;                             //選択したプレゼントID
+        private Integer mPosition;                              //選択したポジション
+        private PresentListAdapter adapter;                     //プレゼント一覧アダプター
+        private MemberEntity mMember;                           //メンバーデータ
+        private ArrayList<PresentEntity> mPresentList;          //プレゼントリスト
+
+        /**
+         * onCreateView
+         * 
+         * @param LayoutInflater inflater
+         * @param ViewGroup container
+         * @param Bundle savedInstanceState
+         * @return View
+         * @access public
+         */
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+
+            mView = inflater.inflate(R.layout.fragment_member_detail, container, false);
+
+            mMemberId = (Integer) getArguments().getInt("MEMBER_ID", 0);
+
+            // fragment再生成抑止
+            setRetainInstance(true);
+
+            //メンバーデータ取得
+            getMemberData();
+
+            //プレゼントリスト取得
+            getPresentList();
+
+            return mView;
+        }
+
+        /**
+         * onResume
+         * 
+         * @return void
+         * @access public
+         */
+        @Override
+        public void onResume()
+        {
+            super.onResume();
+
+            //背景画像消える対策
+            ListView listViewPresent = (ListView) mView.findViewById(R.id.listViewPresent);
+            listViewPresent.setScrollingCacheEnabled(false);
+
+            //人物情報をビューにセット
+            setMemberData();
+
+            //プレゼント情報取得、ビューにセット
+            setPresentData();
+
+            //あげるボタンセット
+            Button buttonGive = (Button) mView.findViewById(R.id.buttonGive);
+            buttonGive.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    editPresent();
+                    mType = Config.GIVE_TYPE;
+                    setPresentData();
+                    setTab();
                 }
             });
 
-            //削除ボタン
-            Button detailButtonDelete = (Button) detail_dialog.findViewById(R.id.buttonDelete);
-            detailButtonDelete.setOnClickListener(new View.OnClickListener() {
+            //もらうボタンセット
+            Button buttonGave = (Button) mView.findViewById(R.id.buttonGave);
+            buttonGave.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
-                    showPresentDeleteDialog();
-                }
-            });
-
-            //画像拡大表示
-            ImageView imageViewPhoto = (ImageView) detail_dialog.findViewById(R.id.imageViewPhoto);
-            imageViewPhoto.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    Intent i = new Intent(getApplicationContext(), ShowPhotoActivity.class);
-                    i.putExtra("PHOTO", presents.get(position).getPhoto());
-                    startActivity(i);
+                    mType = Config.GAVE_TYPE;
+                    setPresentData();
+                    setTab();
                 }
             });
         }
 
-        detail_dialog.setContent(presents.get(position));
-        detail_dialog.show();
-    }
+        /**
+         * 人物情報をビューにセット
+         * 
+         * @return void
+         * @access private
+         */
+        private void setMemberData()
+        {
+            //写真セット
+            if (mMember.getPhoto() != null) {
+                Integer height = getResources().getDimensionPixelSize(R.dimen.tmp_photo_height);
+                Integer width = getResources().getDimensionPixelSize(R.dimen.tmp_photo_width);
 
-    /**
-     * 人物削除確認ダイアログ表示
-     * 
-     * @return void
-     * @access private
-     */
-    private void showMemberDeleteDialog()
-    {
-        if (member_del_dialog == null) {
-            member_del_dialog = new ConfirmDialog(this, "この人物を削除してよろしいですか？");
+                String imgPath = Config.getImgDirPath(getActivity()) + "/" + mMember.getPhoto();
+                ImgUtils imgUtils = new ImgUtils(imgPath);
 
-            Button alertButtonOk = (Button) member_del_dialog.findViewById(R.id.buttonOk);
-            alertButtonOk.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    deleteMember();
+                ImageView imageViewPhoto = (ImageView) mView.findViewById(R.id.imageViewPhoto);
+                imageViewPhoto.setImageBitmap(imgUtils.getResizeImg(height, width));
+                imageViewPhoto.setEnabled(true);
+
+                //タップ時の画像拡大
+                imageViewPhoto.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        Intent i = new Intent(getActivity(), ShowPhotoActivity.class);
+                        i.putExtra("PHOTO", mMember.getPhoto());
+                        startActivity(i);
+                    }
+                });
+            } else {
+                ImageView imageViewPhoto = (ImageView) mView.findViewById(R.id.imageViewPhoto);
+                imageViewPhoto.setImageResource(R.drawable.no_image);
+                imageViewPhoto.setEnabled(false);
+            }
+
+            //名前
+            TextView textViewName = (TextView) mView.findViewById(R.id.textViewName);
+            textViewName.setText(mMember.getName());
+
+            //ふりがな
+            TextView textViewKana = (TextView) mView.findViewById(R.id.textViewKana);
+
+            if (mMember.getKana().length() != 0) {
+                textViewKana.setText(mMember.getKana());
+                textViewKana.setVisibility(View.VISIBLE);
+            } else {
+                textViewKana.setVisibility(View.GONE);
+            }
+
+            //関係性
+            TextView textViewRelation = (TextView) mView.findViewById(R.id.textViewRelation);
+            textViewRelation.setText(mMember.getRelationName());
+
+            GradientDrawable shape = (GradientDrawable) textViewRelation.getBackground();
+            textViewRelation.setBackgroundDrawable(shape);
+            shape.setColor(mMember.getLabel());
+
+            //誕生日
+            TextView textViewBirth = (TextView) mView.findViewById(R.id.textViewBirth);
+
+            if (mMember.getBirth() != null) {
+                textViewBirth.setText(mMember.getBirthAge());
+                textViewBirth.setVisibility(View.VISIBLE);
+            } else {
+                textViewBirth.setVisibility(View.GONE);
+            }
+
+            //メモ
+            Button buttonMemo = (Button) mView.findViewById(R.id.buttonMemo);
+
+            if (mMember.getMemo().length() != 0) {
+                buttonMemo.setVisibility(View.VISIBLE);
+                buttonMemo.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        //TODO メモダイアログ
+                    }
+                });
+            } else {
+                buttonMemo.setVisibility(View.GONE);
+            }
+        }
+
+        /**
+         * プレゼント情報取得、ビューにセット
+         * 
+         * @return void
+         * @access private
+         */
+        private void setPresentData()
+        {
+            //プレゼント情報をビューにセット
+            ListView listViewPresent = (ListView) mView.findViewById(R.id.listViewPresent);
+
+            adapter = new PresentListAdapter(getActivity(), mPresentList, mType);
+            listViewPresent.setAdapter(adapter);
+
+            //イベントリスナーセット
+            listViewPresent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int l_position, long id) {
+                    mPresentId = (int) adapter.getItemId(l_position);
+                    showDetailDialog();
                 }
             });
         }
 
-        member_del_dialog.show();
-    }
+        /**
+         * タブの見た目を切り替える
+         * 
+         * @return void
+         * @access private
+         */
+        private void setTab()
+        {
+            Button buttonOn;
+            Button buttonOff;
 
-    /**
-     * プレゼント削除確認ダイアログ表示
-     * 
-     * @return void
-     * @access private
-     */
-    private void showPresentDeleteDialog()
-    {
-        if (present_del_dialog == null) {
-            present_del_dialog = new ConfirmDialog(this, "削除してよろしいですか？");
+            if (mType == Config.GAVE_TYPE) {
+                buttonOn = (Button) mView.findViewById(R.id.buttonGive);
+                buttonOff = (Button) mView.findViewById(R.id.buttonGave);
 
-            //OKボタン
-            Button confirmButtonOk = (Button) present_del_dialog.findViewById(R.id.buttonOk);
-            confirmButtonOk.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    deletePresent();
-                }
-            });
+            } else {
+                buttonOn = (Button) mView.findViewById(R.id.buttonGave);
+                buttonOff = (Button) mView.findViewById(R.id.buttonGive);
+            }
+
+            buttonOn.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_on));
+            buttonOff.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_off));
         }
 
-        present_del_dialog.show();
-    }
+        /**
+         * 編集処理
+         * 
+         * @return void
+         * @access private
+         */
+        private void editPresent()
+        {
+            Intent intent = new Intent(getActivity(), PresentAddActivity.class);
+            intent.putExtra("ID", mPresentId);
+            startActivity(intent);
+        }
 
-    /**
-     * 初期化
-     * 
-     * @return void
-     * @access private
-     */
-    private void setNull()
-    {
-        adapter = null;
-        detail_dialog = null;
-        memo_dialog = null;
-        member_del_dialog = null;
-        present_del_dialog = null;
-        memberDao = null;
-        presentDao = null;
-        member = null;
-        presents = null;
-        member_id = null;
-        position = null;
-        type = 1;
+        /**
+         * 詳細ダイアログを開く
+         * 
+         * @return void
+         * @access private
+         */
+        private void showDetailDialog()
+        {
+            if (detail_dialog == null) {
+                detail_dialog = new PresentDetailDialog(this, file_dir);
+
+                //編集ボタン
+                Button detailButtonEdit = (Button) detail_dialog.findViewById(R.id.buttonEdit);
+                detailButtonEdit.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        editPresent();
+                    }
+                });
+
+                //削除ボタン
+                Button detailButtonDelete = (Button) detail_dialog.findViewById(R.id.buttonDelete);
+                detailButtonDelete.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        showPresentDeleteDialog();
+                    }
+                });
+
+                //画像拡大表示
+                ImageView imageViewPhoto = (ImageView) detail_dialog.findViewById(R.id.imageViewPhoto);
+                imageViewPhoto.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), ShowPhotoActivity.class);
+                        i.putExtra("PHOTO", presents.get(position).getPhoto());
+                        startActivity(i);
+                    }
+                });
+            }
+
+            detail_dialog.setContent(presents.get(position));
+            detail_dialog.show();
+        }
+
+        /**
+         * 人物削除処理
+         * 
+         * @return void
+         * @access private
+         */
+        private void deleteMember()
+        {
+            SQLiteDatabase db = null;
+
+            try {
+                //DB削除
+                BaseSQLiteOpenHelper helper = new BaseSQLiteOpenHelper(getActivity().getApplicationContext());
+                db = helper.getWritableDatabase();
+
+                MemberDao memberDao = new MemberDao();
+                memberDao.delete(db, mMemberId, mMember.getName());
+
+                //画像削除
+                String fileDir = Config.getImgDirPath(getActivity());
+                String fileName = Config.getImgFileName(Config.MEMBER_IMG_FLG, mMemberId);
+                MediaUtils.deleteDirFile(fileDir + "/" + fileName);
+
+                AndroidUtils.showToastL(getActivity(), "削除しました。");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                db.close();
+            }
+        }
+
+        /**
+         * プレゼント削除
+         * 
+         * @return void
+         * @access private
+         */
+        private void deletePresent()
+        {
+            SQLiteDatabase db = null;
+
+            try {
+                //DB削除
+                BaseSQLiteOpenHelper helper = new BaseSQLiteOpenHelper(getActivity().getApplicationContext());
+                db = helper.getWritableDatabase();
+
+                PresentDao presentDao = new PresentDao();
+                presentDao.delete(db, mPresentId);
+
+                //画像削除
+                String fileDir = Config.getImgDirPath(getActivity());
+                String fileName = Config.getImgFileName(Config.PRESENT_IMG_FLG, mPresentId);
+                MediaUtils.deleteDirFile(fileDir + "/" + fileName);
+
+                //表示更新
+                adapter.remove(mPosition);
+
+                AndroidUtils.showToastL(getActivity(), "削除しました。");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                db.close();
+            }
+        }
+
+        /**
+         * メンバーデータを取得
+         * 
+         * @return void
+         * @access private
+         */
+        private void getMemberData()
+        {
+            SQLiteDatabase db = null;
+
+            try {
+                BaseSQLiteOpenHelper helper = new BaseSQLiteOpenHelper(getActivity().getApplicationContext());
+                db = helper.getWritableDatabase();
+
+                MemberDao memberDao = new MemberDao();
+                mMember = memberDao.selectMemberDetail(db, mMemberId);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                db.close();
+            }
+        }
+
+        /**
+         * プレゼントリストを取得
+         * 
+         * @return void
+         * @access private
+         */
+        private void getPresentList()
+        {
+            SQLiteDatabase db = null;
+
+            try {
+                BaseSQLiteOpenHelper helper = new BaseSQLiteOpenHelper(getActivity().getApplicationContext());
+                db = helper.getWritableDatabase();
+
+                PresentDao presentDao = new PresentDao();
+                mPresentList = presentDao.selectPresentList(db, mMemberId, mType);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                db.close();
+            }
+        }
     }
 }

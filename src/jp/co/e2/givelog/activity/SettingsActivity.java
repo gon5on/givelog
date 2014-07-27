@@ -5,7 +5,10 @@ import jp.co.e2.givelog.dialog.AboutDialog;
 import jp.co.e2.givelog.dialog.GuideDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
 /**
@@ -20,40 +23,76 @@ public class SettingsActivity extends BaseActivity
      * 
      * @param Bundle savedInstanceState
      * @return void
-     * @access public
+     * @access protected
      */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_back_btn);
 
-        //ヘッダのボタン
-        setHeaderReturnButton();
+        if (savedInstanceState == null) {
+            //ヘッダのボタンセット
+            setHeaderReturnButton();
 
-        //グループ設定ボタン
-        Button buttonGroup = (Button) findViewById(R.id.buttonGroup);
-        buttonGroup.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, RelationListActivity.class);
-                startActivity(intent);
-            }
-        });
+            getSupportFragmentManager().beginTransaction().add(R.id.container, new SettingFragment()).commit();
+        }
+    }
 
-        //ヘルプ設定ボタン
-        Button helpGroup = (Button) findViewById(R.id.buttonHelp);
-        helpGroup.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new GuideDialog(SettingsActivity.this).show();
-            }
-        });
+    /**
+     * SettingFragment
+     * 
+     * @access public
+     */
+    public static class SettingFragment extends Fragment
+    {
+        private View mView = null;
 
-        //アバウト設定ボタン
-        Button aboutGroup = (Button) findViewById(R.id.buttonAbout);
-        aboutGroup.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new AboutDialog(SettingsActivity.this).show();
-            }
-        });
+        /**
+         * onCreateView
+         * 
+         * @param LayoutInflater inflater
+         * @param ViewGroup container
+         * @param Bundle savedInstanceState
+         * @return View
+         * @access public
+         */
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+
+            // fragment再生成抑止
+            setRetainInstance(true);
+
+            mView = inflater.inflate(R.layout.fragment_settings, container, false);
+
+            //グループ設定ボタン
+            Button buttonGroup = (Button) mView.findViewById(R.id.buttonGroup);
+            buttonGroup.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), RelationListActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            //ヘルプ設定ボタン
+            Button helpGroup = (Button) mView.findViewById(R.id.buttonHelp);
+            helpGroup.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    new GuideDialog(getActivity()).show();
+                }
+            });
+
+            //アバウト設定ボタン
+            Button aboutGroup = (Button) mView.findViewById(R.id.buttonAbout);
+            aboutGroup.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    new AboutDialog(getActivity()).show();
+                }
+            });
+
+            return mView;
+        }
     }
 }

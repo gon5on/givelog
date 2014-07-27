@@ -6,18 +6,33 @@
     android:minWidth="290dip"
     android:orientation="vertical" >
 
+    <RelativeLayout
+        android:id="@+id/relativeLayoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:background="@color/header" >
+
+        <Button
+            android:id="@+id/buttonClose"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/icon_close" />
+    </RelativeLayout>
+
     <ScrollView
-        android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp" >
+        android:layout_below="@+id/relativeLayoutHeader" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="10dip" >
+            android:padding="15dip" >
 
             <TextView
                 android:id="@+id/textViewMsg"
@@ -25,7 +40,6 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="10dip"
-                android:layout_marginTop="5dip"
                 android:text="削除してよろしいですか？"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/red" />
@@ -34,7 +48,6 @@
                 android:id="@+id/buttonOk"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dip"
                 android:layout_marginLeft="2dip"
                 android:layout_marginRight="2dip"
                 android:background="@drawable/style_button2"
@@ -42,26 +55,5 @@
                 android:textColor="@color/white" />
         </LinearLayout>
     </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dip"
-        android:layout_alignParentTop="true"
-        android:background="@color/header" >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp" >
-
-            <Button
-                android:id="@+id/buttonClose"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/icon_close" />
-        </LinearLayout>
-    </RelativeLayout>
 
 </RelativeLayout>

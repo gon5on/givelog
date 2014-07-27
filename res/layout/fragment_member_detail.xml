@@ -1,0 +1,152 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/style_bg"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="10dip" >
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_marginRight="10dip"
+            android:layout_weight="2.3" >
+
+            <ImageView
+                android:id="@+id/imageViewPhoto"
+                android:layout_width="@dimen/member_photo_width"
+                android:layout_height="@dimen/member_photo_height"
+                android:layout_marginTop="5dip"
+                android:background="@color/photo_bg"
+                android:scaleType="fitCenter"
+                android:src="@drawable/no_image" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom" >
+
+                <TextView
+                    android:id="@+id/textViewName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginRight="5dip"
+                    android:text="山田太郎"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/gray" />
+
+                <Button
+                    android:id="@+id/buttonMemo"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/icon_memo" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textViewKana"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dip"
+                android:text="ヤマダタロウ"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/right_gray" />
+
+            <TextView
+                android:id="@+id/textViewRelation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip"
+                android:background="@drawable/style_relation_label"
+                android:paddingBottom="3dip"
+                android:paddingLeft="5dip"
+                android:paddingRight="5dip"
+                android:paddingTop="3dip"
+                android:text="小学校の友達"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/textViewBirth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1980/06/10生まれ (30才)"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/gray" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right" >
+
+        <Button
+            android:id="@+id/buttonGive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/tab_on"
+            android:drawableLeft="@drawable/present_on"
+            android:drawablePadding="5dp"
+            android:paddingBottom="3dip"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="5dip"
+            android:text="あげる"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/buttonGave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/tab_off"
+            android:drawableLeft="@drawable/present_on"
+            android:drawablePadding="5dp"
+            android:paddingBottom="3dip"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="5dip"
+            android:text="もらう"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:background="@color/base" >
+    </View>
+
+    <ListView
+        android:id="@+id/listViewPresent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@drawable/style_dash_line"
+        android:dividerHeight="3sp" >
+    </ListView>
+
+</LinearLayout>

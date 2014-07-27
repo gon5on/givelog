@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @access public
  */
-public class MemberDao extends AppDao
+public class MemberDao extends BaseDao
 {
     // テーブル名
     public static final String TABLE_NAME = "member";
@@ -233,14 +233,14 @@ public class MemberDao extends AppDao
      * @return boolean 成功/失敗
      * @access public
      */
-    public Boolean delete(SQLiteDatabase db, String fileDir, Integer id, String name)
+    public Boolean delete(SQLiteDatabase db, Integer id, String name)
     {
         //メンバー削除
         long ret = db.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[] { Integer.toString(id) });
 
         //削除対象メンバーが含まれている人物データにひと手間加える
         PersonDao personDao = new PersonDao();
-        Boolean ret2 = personDao.slideMemberIdToName(db, id, name, fileDir);
+        Boolean ret2 = personDao.slideMemberIdToName(db, id, name);
 
         return (ret != -1 && ret2 == true) ? true : false;
     }

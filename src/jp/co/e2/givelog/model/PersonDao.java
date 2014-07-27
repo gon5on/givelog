@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @access public
  */
-public class PersonDao extends AppDao
+public class PersonDao extends BaseDao
 {
     // テーブル名
     public static final String TABLE_NAME = "person";

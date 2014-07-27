@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.example.baseapplication.common.DateUtils;
+import jp.co.e2.givelog.common.DateUtils;
 
 /**
  * 日付系バリデーションクラス
