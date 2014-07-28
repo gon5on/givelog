@@ -1,11 +1,13 @@
 package jp.co.e2.givelog.entity;
 
+import java.io.Serializable;
+
 /**
  * プレゼントクラス（セッタとゲッタ）
  * 
  * @access public
  */
-public class PresentEntity
+public class PresentEntity implements Serializable
 {
     //値
     private Integer mId;

@@ -1,72 +1,105 @@
 package jp.co.e2.givelog.dialog;
 
 import jp.co.e2.givelog.R;
+import jp.co.e2.givelog.dialog.ConfirmDialog.CallbackListener;
 import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * 削除確認用ダイアログクラス
+ * 確認用ダイアログクラス
  * 
  * @access public
  */
-public class ConfirmDialog extends Dialog
+public class ConfirmDialog extends AppDialog<CallbackListener>
 {
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context context コンテキスト
-	 * @param String msg 表示する文言
-	 * @access public
-	 */
-	public ConfirmDialog(Context context, String msg)
-	{
-		super(context);
+    /**
+     * インスタンスを返す
+     * 
+     * @param String msg テキスト
+     * @return ConfirmDialog
+     * @access public
+     */
+    public static ConfirmDialog getInstance(String msg)
+    {
+        ConfirmDialog dialog = new ConfirmDialog();
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.dialog_confirm);
+        Bundle bundle = new Bundle();
+        bundle.putString("msg", msg);
+        dialog.setArguments(bundle);
 
-		//OKボタン  コールバック関数の使い方がわからないので、呼び出し元で実装する
-		/*Button alertButtonOk = (Button) findViewById(R.id.buttonOk);
-		alertButtonOk.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		})*/;
+        return dialog;
+    }
 
-		//キャンセルボタン
-		Button confirmButtonCancel = (Button) findViewById(R.id.buttonCancel);
-		confirmButtonCancel.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
+    /**
+     * onCreateDialog
+     * 
+     * @param Bundle savedInstanceState
+     * @return Dialog
+     * @access public
+     */
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+        //bundleから値を取り出す
+        String msg = getArguments().getString("msg");
 
-		//閉じるボタン
-		Button buttonClose = (Button) findViewById(R.id.buttonClose);
-		buttonClose.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
+        //ダイアログ生成
+        Dialog dialog = createDefaultDialog(R.layout.dialog_confirm);
 
-		//文言セット
-		setMsg(msg);
-	}
+        //文言セット
+        TextView textViewMsg = (TextView) dialog.findViewById(R.id.textViewMsg);
+        textViewMsg.setText(msg);
 
-	/**
-	 * 表示する文言をセットする
-	 * 
-	 * @param String msg 表示する文言
-	 * @return void
-	 * @access public
-	 */
-	public void setMsg(String msg)
-	{
-		TextView alertTextViewMsg = (TextView) findViewById(R.id.textViewMsg);
-		alertTextViewMsg.setText(msg);
-	}
+        //OKボタン
+        Button alertButtonOk = (Button) dialog.findViewById(R.id.buttonOk);
+        alertButtonOk.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onClickConfirmDialogOk();
+                }
+                dismiss();
+            }
+        });
+
+        //キャンセルボタン
+        Button buttonCancel = (Button) dialog.findViewById(R.id.buttonCancel);
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onClickConfirmDialogCancel();
+                }
+                dismiss();
+            }
+        });
+
+        //閉じるボタン
+        Button buttonClose = (Button) dialog.findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onClickConfirmDialogClose();
+                }
+                dismiss();
+            }
+        });
+
+        return dialog;
+    }
+
+    /**
+     * コールバックリスナー
+     * 
+     * @access public
+     */
+    public interface CallbackListener
+    {
+        public void onClickConfirmDialogOk();
+
+        public void onClickConfirmDialogCancel();
+
+        public void onClickConfirmDialogClose();
+    }
 }

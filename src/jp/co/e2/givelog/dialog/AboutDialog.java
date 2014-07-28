@@ -1,10 +1,10 @@
 package jp.co.e2.givelog.dialog;
 
 import jp.co.e2.givelog.R;
+import jp.co.e2.givelog.dialog.AboutDialog.CallbackListener;
 import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 
 /**
@@ -12,27 +12,55 @@ import android.widget.Button;
  * 
  * @access public
  */
-public class AboutDialog extends Dialog
+public class AboutDialog extends AppDialog<CallbackListener>
 {
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context context
-	 * @access public
-	 */
-	public AboutDialog(Context context)
-	{
-		super(context);
+    /**
+     * インスタンスを返す
+     * 
+     * @return AboutDialog
+     * @access public
+     */
+    public static AboutDialog getInstance()
+    {
+        AboutDialog dialog = new AboutDialog();
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.dialog_about);
+        return dialog;
+    }
 
-		//閉じるボタン
-		Button buttonClose = (Button) findViewById(R.id.buttonClose);
-		buttonClose.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
-	}
+    /**
+     * onCreateDialog
+     * 
+     * @param Bundle savedInstanceState
+     * @return Dialog
+     * @access public
+     */
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+        //ダイアログ生成
+        Dialog dialog = createDefaultDialog(R.layout.dialog_about);
+
+        //閉じるボタン
+        Button buttonClose = (Button) dialog.findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onClickAboutDialogClose();
+                }
+                dismiss();
+            }
+        });
+
+        return dialog;
+    }
+
+    /**
+     * コールバックリスナー
+     * 
+     * @access public
+     */
+    public interface CallbackListener
+    {
+        public void onClickAboutDialogClose();
+    }
 }

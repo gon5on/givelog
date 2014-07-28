@@ -1,10 +1,10 @@
 package jp.co.e2.givelog.dialog;
 
 import jp.co.e2.givelog.R;
+import jp.co.e2.givelog.dialog.ErrorDialog.CallbackListener;
 import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -13,52 +13,80 @@ import android.widget.TextView;
  * 
  * @access public
  */
-public class ErrorDialog extends Dialog
+public class ErrorDialog extends AppDialog<CallbackListener>
 {
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context context コンテキスト
-	 * @param String msg 表示する文言
-	 * @access public
-	 */
-	public ErrorDialog(Context context, String msg)
-	{
-		super(context);
+    /**
+     * インスタンスを返す
+     * 
+     * @param String msg テキスト
+     * @return ErrorDialog
+     * @access public
+     */
+    public static ErrorDialog getInstance(String msg)
+    {
+        ErrorDialog dialog = new ErrorDialog();
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.dialog_error);
+        Bundle bundle = new Bundle();
+        bundle.putString("msg", msg);
+        dialog.setArguments(bundle);
 
-		//OKボタン
-		Button alertButtonOk = (Button) findViewById(R.id.buttonOk);
-		alertButtonOk.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
+        return dialog;
+    }
 
-		//閉じるボタン
-		Button buttonClose = (Button) findViewById(R.id.buttonClose);
-		buttonClose.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
+    /**
+     * onCreateDialog
+     * 
+     * @param Bundle savedInstanceState
+     * @return Dialog
+     * @access public
+     */
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+        //bundleから値を取り出す
+        String msg = getArguments().getString("msg");
 
-		//文言セット
-		setMsg(msg);
-	}
+        //ダイアログ生成
+        Dialog dialog = createDefaultDialog(R.layout.dialog_error);
 
-	/**
-	 * 表示する文言をセットする
-	 * 
-	 * @param String msg 表示する文言
-	 * @return void
-	 * @access public
-	 */
-	public void setMsg(String msg)
-	{
-		TextView alertTextViewMsg = (TextView) findViewById(R.id.textViewMsg);
-		alertTextViewMsg.setText(msg);
-	}
+        //文言セット
+        TextView textViewMsg = (TextView) dialog.findViewById(R.id.textViewMsg);
+        textViewMsg.setText(msg);
+
+        //OKボタン
+        Button alertButtonOk = (Button) dialog.findViewById(R.id.buttonOk);
+        alertButtonOk.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onClickErrorDialogOk();
+                }
+                dismiss();
+            }
+        });
+
+        //閉じるボタン
+        Button buttonClose = (Button) dialog.findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onClickErrorDialogClose();
+                }
+                dismiss();
+            }
+        });
+
+        return dialog;
+    }
+
+    /**
+     * コールバックリスナー
+     * 
+     * @access public
+     */
+    public interface CallbackListener
+    {
+        public void onClickErrorDialogOk();
+
+        public void onClickErrorDialogClose();
+    }
 }

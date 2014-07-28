@@ -2,12 +2,13 @@ package jp.co.e2.givelog.dialog;
 
 import jp.co.e2.givelog.R;
 import jp.co.e2.givelog.common.ImgUtils;
+import jp.co.e2.givelog.config.Config;
+import jp.co.e2.givelog.dialog.ConfirmDialog.CallbackListener;
 import jp.co.e2.givelog.entity.PresentEntity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,92 +18,112 @@ import android.widget.TextView;
  * 
  * @access public
  */
-public class PresentDetailDialog extends Dialog
+public class PresentDetailDialog extends AppDialog<CallbackListener>
 {
-	private Context context;	//コンテキスト
-	private String file_dir;	//写真保存パス
+    /**
+     * インスタンスを返す
+     * 
+     * @param PresentDetailDialog data プレゼントデータ
+     * @return ConfirmDialog
+     * @access public
+     */
+    public static PresentDetailDialog getInstance(PresentEntity data)
+    {
+        PresentDetailDialog dialog = new PresentDetailDialog();
 
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context context コンテキスト
-	 * @param String file_dir
-	 * @access public
-	 */
-	public PresentDetailDialog(Context context, String file_dir)
-	{
-		super(context);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("data", data);
+        dialog.setArguments(bundle);
 
-		this.context = context;
-		this.file_dir = file_dir;
+        return dialog;
+    }
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.dialog_present_detail);
+    /**
+     * onCreateDialog
+     * 
+     * @param Bundle savedInstanceState
+     * @return Dialog
+     * @access public
+     */
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+        //bundleから値を取り出す
+        PresentEntity data = (PresentEntity) getArguments().getSerializable("data");
 
-		//閉じるボタン
-		Button buttonClose = (Button) findViewById(R.id.buttonClose);
-		buttonClose.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
-	}
+        //ダイアログ生成
+        Dialog dialog = createDefaultDialog(R.layout.dialog_present_detail);
 
-	/**
-	 * プレゼント情報を画面にセットする
-	 * 
-	 * @param PresentEntity present プレゼントクラス
-	 * @return void
-	 * @access public
-	 */
-	public void setContent(final PresentEntity present)
-	{
-		//日付とイベント
-		TextView textViewDate = (TextView) findViewById(R.id.textViewDate);
-		textViewDate.setText(present.getDate() + "  " + present.getEvent());
+        //ボタンセット
+        Button buttonClose = (Button) dialog.findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
 
-		//だれから
-		TextView textViewFrom = (TextView) findViewById(R.id.textViewFrom);
-		textViewFrom.setText(present.getGiveFull());
+        //プレゼントデータセット
+        setPresentData(dialog, data);
 
-		//だれへ
-		TextView textViewTo = (TextView) findViewById(R.id.textViewTo);
-		textViewTo.setText(present.getGaveFull());
+        return dialog;
+    }
 
-		//プレゼント
-		TextView textViewPresent = (TextView) findViewById(R.id.textViewPresent);
-		textViewPresent.setText(present.getPresent() + present.getPriceUnit(1));
+    /**
+     * プレゼント情報を画面にセットする
+     * 
+     * @param Dialog dialog
+     * @param PresentEntity data プレゼントクオブジェクト
+     * @return void
+     * @access public
+     */
+    public void setPresentData(Dialog dialog, PresentEntity data)
+    {
+        //日付とイベント
+        TextView textViewDate = (TextView) dialog.findViewById(R.id.textViewDate);
+        textViewDate.setText(data.getDate() + "  " + data.getEvent());
 
-		//メモ
-		TextView textViewMemo = (TextView) findViewById(R.id.textViewMemo);
-		TextView textViewMemoLabel = (TextView) findViewById(R.id.textViewMemoLabel);
+        //だれから
+        TextView textViewFrom = (TextView) dialog.findViewById(R.id.textViewFrom);
+        textViewFrom.setText(data.getGiveFull());
 
-		if (present.getMemo().length() != 0) {
-			textViewMemo.setText(present.getMemo());
-			textViewMemo.setVisibility(View.VISIBLE);
-			textViewMemoLabel.setVisibility(View.VISIBLE);
-		} else {
-			textViewMemo.setVisibility(View.GONE);
-			textViewMemoLabel.setVisibility(View.GONE);
-		}
+        //だれへ
+        TextView textViewTo = (TextView) dialog.findViewById(R.id.textViewTo);
+        textViewTo.setText(data.getGaveFull());
 
-		//写真
-		ImageView imageViewPhoto = (ImageView) findViewById(R.id.imageViewPhoto);
+        //プレゼント
+        TextView textViewPresent = (TextView) dialog.findViewById(R.id.textViewPresent);
+        textViewPresent.setText(data.getPresent() + data.getPriceUnit(1));
 
-		if (present.getPhoto() != null) {
-			imageViewPhoto.setVisibility(View.VISIBLE);
+        //メモ
+        TextView textViewMemo = (TextView) dialog.findViewById(R.id.textViewMemo);
+        TextView textViewMemoLabel = (TextView) dialog.findViewById(R.id.textViewMemoLabel);
 
-			Resources res = context.getResources();
-			Integer height = res.getDimensionPixelSize(R.dimen.present_photo_height);
-			Integer width = res.getDimensionPixelSize(R.dimen.present_photo_width);
+        if (data.getMemo().length() != 0) {
+            textViewMemo.setText(data.getMemo());
+            textViewMemo.setVisibility(View.VISIBLE);
+            textViewMemoLabel.setVisibility(View.VISIBLE);
+        } else {
+            textViewMemo.setVisibility(View.GONE);
+            textViewMemoLabel.setVisibility(View.GONE);
+        }
 
-			String img_path = file_dir + "/" + present.getPhoto();
-			ImgUtils imgUtils = new ImgUtils(context, img_path);
+        //写真
+        ImageView imageViewPhoto = (ImageView) dialog.findViewById(R.id.imageViewPhoto);
 
-			imageViewPhoto.setImageBitmap(imgUtils.getResizeImg(height, width));
-			imageViewPhoto.setEnabled(true);
-		} else {
-			imageViewPhoto.setVisibility(View.GONE);
-		}
-	}
+        if (data.getPhoto() != null) {
+            imageViewPhoto.setVisibility(View.VISIBLE);
+
+            Resources res = getResources();
+            Integer height = res.getDimensionPixelSize(R.dimen.present_photo_height);
+            Integer width = res.getDimensionPixelSize(R.dimen.present_photo_width);
+
+            String imgPath = Config.getImgDirPath(getActivity()) + "/" + data.getPhoto();
+            ImgUtils imgUtils = new ImgUtils(imgPath);
+
+            imageViewPhoto.setImageBitmap(imgUtils.getResizeImg(height, width));
+            imageViewPhoto.setEnabled(true);
+        } else {
+            imageViewPhoto.setVisibility(View.GONE);
+        }
+    }
 }

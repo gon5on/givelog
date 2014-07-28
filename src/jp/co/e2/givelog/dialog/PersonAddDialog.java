@@ -1,10 +1,10 @@
 package jp.co.e2.givelog.dialog;
 
 import jp.co.e2.givelog.R;
+import jp.co.e2.givelog.dialog.PersonAddDialog.CallbackListener;
 import android.app.Dialog;
-import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -13,60 +13,80 @@ import android.widget.TextView;
  * 
  * @access public
  */
-public class PersonAddDialog extends Dialog
+public class PersonAddDialog extends AppDialog<CallbackListener>
 {
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context context コンテキスト
-	 * @access public
-	 */
-	public PersonAddDialog(Context context)
-	{
-		super(context);
+    /**
+     * インスタンスを返す
+     * 
+     * @param String person カスタム人物名
+     * @return PersonAddDialog
+     * @access public
+     */
+    public static PersonAddDialog getInstance(String person)
+    {
+        PersonAddDialog dialog = new PersonAddDialog();
 
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.dialog_person_add);
+        Bundle bundle = new Bundle();
+        bundle.putString("person", person);
+        dialog.setArguments(bundle);
 
-		//OKボタン
-		/*Button buttonOk = (Button) findViewById(R.id.buttonOk);
-		buttonOk.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});*/
+        return dialog;
+    }
 
-		//閉じるボタン
-		Button buttonClose = (Button) findViewById(R.id.buttonClose);
-		buttonClose.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				dismiss();
-			}
-		});
-	}
+    /**
+     * onCreateDialog
+     * 
+     * @param Bundle savedInstanceState
+     * @return Dialog
+     * @access public
+     */
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+        //bundleから値を取り出す
+        String person = getArguments().getString("person");
 
-	/**
-	 * 表示するカスタム人物名をセットする
-	 * 
-	 * @param String text カスタム人物名
-	 * @return void
-	 * @access public
-	 */
-	public void setText(String text)
-	{
-		TextView editTextPerson = (TextView) findViewById(R.id.editTextPerson);
-		editTextPerson.setText(text);
-	}
+        //ダイアログ生成
+        Dialog dialog = createDefaultDialog(R.layout.dialog_person_add);
 
-	/**
-	 * カスタム人物名を取得する
-	 * 
-	 * @return String 人物名
-	 * @access public
-	 */
-	public String getText()
-	{
-		TextView editTextPerson = (TextView) findViewById(R.id.editTextPerson);
-		return editTextPerson.getText().toString();
-	}
+        //カスタム人物名セット
+        final TextView editTextPerson = (TextView) dialog.findViewById(R.id.editTextPerson);
+        editTextPerson.setText(person);
+
+        //OKボタン
+        Button alertButtonOk = (Button) dialog.findViewById(R.id.buttonOk);
+        alertButtonOk.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onClickPersonAddDialogOk(editTextPerson.getText().toString());
+                }
+                dismiss();
+            }
+        });
+
+        //閉じるボタン
+        Button buttonClose = (Button) dialog.findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onClickPersonAddDialogClose();
+                }
+                dismiss();
+            }
+        });
+
+        return dialog;
+    }
+
+    /**
+     * コールバックリスナー
+     * 
+     * @access public
+     */
+    public interface CallbackListener
+    {
+        public void onClickPersonAddDialogOk(String person);
+
+        public void onClickPersonAddDialogClose();
+    }
 }

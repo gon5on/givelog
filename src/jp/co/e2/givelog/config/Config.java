@@ -40,7 +40,7 @@ public class Config
     public static final String TWICE_FLAG = "twice_flag";               //起動2回目以降フラグ
 
     /**
-     * 画像保存パスを返す
+     * 画像保存ディレクトリパスを返す
      * 
      * @param Context context
      * @return String
@@ -95,15 +95,28 @@ public class Config
     /**
      * 画像ファイル名を生成
      * 
-     * @param Context context
+     * @param Integer flg
+     * @param Integer id
      * @return String
-     * @throws IOException
      */
     public static String getImgFileName(Integer flg, Integer id)
     {
-        String path = (flg == PRESENT_IMG_FLG) ? PRESENT_IMG_PREFIX : MEMBER_IMG_PREFIX;
-        path += "_" + id + ".jpg";
+        String prefix = (flg == PRESENT_IMG_FLG) ? PRESENT_IMG_PREFIX : MEMBER_IMG_PREFIX;
+        String path = prefix + "_" + id + ".jpg";
 
         return path;
+    }
+
+    /**
+     * 画像パスを生成
+     * 
+     * @param Context context
+     * @param Integer flg
+     * @param Integer id
+     * @return String
+     */
+    public static String getImgFilePath(Context context, Integer flg, Integer id)
+    {
+        return getImgDirPath(context) + "/" + getImgFileName(flg, id);
     }
 }
