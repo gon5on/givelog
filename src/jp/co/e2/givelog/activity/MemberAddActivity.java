@@ -12,7 +12,7 @@ import jp.co.e2.givelog.dialog.PhotoSelectDialog;
 import jp.co.e2.givelog.entity.MemberEntity;
 import jp.co.e2.givelog.entity.RelationEntity;
 import jp.co.e2.givelog.model.MemberDao;
-import jp.co.e2.givelog.validate.Validate;
+import jp.co.e2.givelog.validate.ValidateHelper;
 import jp.co.e2.givelog.validate.ValidateRequire;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -370,7 +370,7 @@ public class MemberAddActivity extends BaseActivity
             String name = editTextName.getText().toString();
 
             //バリデート
-            Validate v = new Validate();
+            ValidateHelper v = new ValidateHelper();
             ValidateRequire.check(v, name, "名前");
 
             if (v.getResult() == false) {

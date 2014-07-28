@@ -11,7 +11,7 @@ import jp.co.e2.givelog.dialog.ErrorDialog;
 import jp.co.e2.givelog.dialog.RelationDialog;
 import jp.co.e2.givelog.entity.RelationEntity;
 import jp.co.e2.givelog.model.RelationDao;
-import jp.co.e2.givelog.validate.Validate;
+import jp.co.e2.givelog.validate.ValidateHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -173,7 +173,7 @@ public class RelationListActivity extends BaseActivity
 		String name = textEditName.getText().toString();
 
 		//バリデート
-		Validate validate = new Validate();
+		ValidateHelper validate = new ValidateHelper();
 		validate.set();
 		validate.require.check(name, "名称", "");
 

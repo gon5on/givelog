@@ -14,7 +14,7 @@ import jp.co.e2.givelog.entity.MemberEntity;
 import jp.co.e2.givelog.entity.PresentEntity;
 import jp.co.e2.givelog.model.MemberDao;
 import jp.co.e2.givelog.model.PresentDao;
-import jp.co.e2.givelog.validate.Validate;
+import jp.co.e2.givelog.validate.ValidateHelper;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -559,7 +559,7 @@ public class PresentAddActivity extends BaseActivity
 	 */
 	private Boolean validate()
 	{
-		Validate validate = new Validate();
+		ValidateHelper validate = new ValidateHelper();
 
 		//だれから
 		validate.set();
