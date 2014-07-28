@@ -1,37 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:android1="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayoutBg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android1:layout_margin="10dip"
     android1:background="@drawable/style_list_bg" >
 
-    <LinearLayout
+    <TextView
+        android1:id="@+id/textViewName"
         android1:layout_width="match_parent"
-        android1:layout_height="match_parent"
-        android1:layout_margin="10dip" >
+        android1:layout_height="wrap_content"
+        android1:layout_weight="1"
+        android1:text="家族"
+        android1:textAppearance="?android:attr/textAppearanceLarge"
+        android1:textColor="@color/gray" />
 
-        <TextView
-            android1:id="@+id/textViewName"
-            android1:layout_width="match_parent"
-            android1:layout_height="wrap_content"
-            android1:layout_weight="1"
-            android1:text="家族"
-            android1:textAppearance="?android:attr/textAppearanceLarge"
-            android1:textColor="@color/gray" />
-
-        <TextView
-            android1:id="@+id/textViewColor"
-            android1:layout_width="match_parent"
-            android1:layout_height="wrap_content"
-            android1:layout_weight="4"
-            android1:background="@drawable/style_relation_label"
-            android1:paddingBottom="3dip"
-            android1:paddingLeft="5dip"
-            android1:paddingRight="5dip"
-            android1:paddingTop="3dip"
-            android1:textAppearance="?android:attr/textAppearanceLarge"
-            android1:textColor="@color/white" />
-    </LinearLayout>
+    <TextView
+        android1:id="@+id/textViewColor"
+        android1:layout_width="match_parent"
+        android1:layout_height="wrap_content"
+        android1:layout_weight="4"
+        android1:background="@drawable/style_relation_label"
+        android1:paddingBottom="3dip"
+        android1:paddingLeft="5dip"
+        android1:paddingRight="5dip"
+        android1:paddingTop="3dip"
+        android1:textAppearance="?android:attr/textAppearanceLarge"
+        android1:textColor="@color/white" />
 
 </LinearLayout>

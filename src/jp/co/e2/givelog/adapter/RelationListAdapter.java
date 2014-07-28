@@ -9,7 +9,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 /**
@@ -17,53 +17,92 @@ import android.widget.TextView;
  * 
  * @access public
  */
-public class RelationListAdapter extends ArrayAdapter<RelationEntity>
+public class RelationListAdapter extends BaseAdapter
 {
-	private LayoutInflater inflater;
-	private View convertView;
+    private LayoutInflater mInflater;
+    private ArrayList<RelationEntity> mData;         //グループデータ
 
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context contex
-	 * @param Integer layoutId
-	 * @param List<Member> objects
-	 */
-	public RelationListAdapter(Context context, int layoutId, ArrayList<RelationEntity> objects)
-	{
-		super(context, 0, objects);
-		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
+    /**
+     * コンストラクタ
+     * 
+     * @param Context context
+     * @param Integer layoutId
+     * @param List<Member> data
+     * @param Integer type だれからだれへフラグ
+     */
+    public RelationListAdapter(Context context, ArrayList<RelationEntity> data, Integer type)
+    {
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mData = data;
+    }
 
-	/**
-	 * getView
-	 * 
-	 * @param int position
-	 * @param View convertView
-	 * @params ViewGroup parent
-	 * @return View convertView
-	 * @access public
-	 */
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent)
-	{
-		// 特定の行(position)のデータを得る
-		RelationEntity item = getItem(position);
+    /**
+     * getView
+     * 
+     * @param int position
+     * @param View convertView
+     * @param ViewGroup parent
+     * @return View convertView
+     * @access public
+     */
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
+        // 特定の行(position)のデータを得る
+        RelationEntity item = (RelationEntity) getItem(position);
 
-		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.part_relation_list, null);
-		}
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.part_relation_list, null);
+        }
 
-		//名前
-		TextView textViewName = (TextView) convertView.findViewById(R.id.textViewName);
-		textViewName.setText(item.getName());
+        //名前
+        TextView textViewName = (TextView) convertView.findViewById(R.id.textViewName);
+        textViewName.setText(item.getName());
 
-		//背景色
-		TextView textViewColor = (TextView) convertView.findViewById(R.id.textViewColor);
-		GradientDrawable shape = (GradientDrawable) textViewColor.getBackground();
-		textViewColor.setBackgroundDrawable(shape);
-		shape.setColor(item.getLabel());
+        //背景色
+        TextView textViewColor = (TextView) convertView.findViewById(R.id.textViewColor);
+        GradientDrawable shape = (GradientDrawable) textViewColor.getBackground();
+        textViewColor.setBackgroundDrawable(shape);
+        shape.setColor(item.getLabel());
 
-		return convertView;
-	}
+        return convertView;
+    }
+
+    /**
+     * getCount
+     * 
+     * @return Integer
+     * @access public
+     */
+    @Override
+    public int getCount()
+    {
+        return mData.size();
+    }
+
+    /**
+     * getItem
+     * 
+     * @param int position
+     * @return Integer
+     * @access public
+     */
+    @Override
+    public Object getItem(int position)
+    {
+        return mData.get(position);
+    }
+
+    /**
+     * getItemId
+     * 
+     * @param int position
+     * @return Integer
+     * @access public
+     */
+    @Override
+    public long getItemId(int position)
+    {
+        return mData.get(position).getId();
+    }
 }

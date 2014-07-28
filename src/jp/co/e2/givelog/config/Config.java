@@ -21,9 +21,9 @@ public class Config
     public static final Integer RESIZE_WIDTH = 800;
     public static final Integer RESIZE_HEIGHT = 800;
 
-    //あげた・もらったフラグ
-    public static final Integer GIVE_FLG = 1;                           //あげた
-    public static final Integer GAVE_FLG = 2;                           //もらった
+    //あげた・もらったタイプ
+    public static final Integer GIVE_TYPE = 1;                          //あげた
+    public static final Integer GAVE_TYPE = 2;                          //もらった
 
     //画像tmpフォルダ名
     public static final String TMP_DIR_NAME = "tmp";

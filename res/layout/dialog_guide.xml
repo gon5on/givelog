@@ -6,11 +6,26 @@
     android:minWidth="290dip"
     android:orientation="vertical" >
 
+    <RelativeLayout
+        android:id="@+id/relativeLayoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:background="@color/header" >
+
+        <Button
+            android:id="@+id/buttonClose"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/icon_close" />
+    </RelativeLayout>
+
     <ScrollView
-        android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp" >
+        android:layout_below="@+id/relativeLayoutHeader" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,7 +34,6 @@
             android:padding="15dp" >
 
             <TextView
-                android:id="@+id/TextView01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -28,7 +42,6 @@
                 android:textColor="@color/right_gray" />
 
             <TextView
-                android:id="@+id/TextView02"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -38,7 +51,6 @@
                 android:textColor="@color/right_gray" />
 
             <TextView
-                android:id="@+id/TextView03"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -51,7 +63,6 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/TextView04"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1. "
@@ -59,7 +70,6 @@
                     android:textColor="@color/right_gray" />
 
                 <TextView
-                    android:id="@+id/TextView05"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="右上の人物追加ボタンから、人物を登録します。"
@@ -68,7 +78,6 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/imageView1"
                 android:layout_width="250dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center_horizontal"
@@ -81,7 +90,6 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/TextView05"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2. "
@@ -89,7 +97,6 @@
                     android:textColor="@color/right_gray" />
 
                 <TextView
-                    android:id="@+id/TextView06"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="右上のプレゼント追加ボタンから、あげたもの・もらったものを記録します。"
@@ -98,7 +105,6 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/ImageView01"
                 android:layout_width="250dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center_horizontal"
@@ -111,7 +117,6 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/TextView08"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3. "
@@ -119,7 +124,6 @@
                     android:textColor="@color/right_gray" />
 
                 <TextView
-                    android:id="@+id/TextView07"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="一覧からあげたもの・もらったものを確認したい人物をタップします。"
@@ -128,7 +132,6 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/imageView3"
                 android:layout_width="250dp"
                 android:layout_height="210dp"
                 android:layout_gravity="center_horizontal"
@@ -141,7 +144,6 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/TextView09"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="4. "
@@ -149,7 +151,6 @@
                     android:textColor="@color/right_gray" />
 
                 <TextView
-                    android:id="@+id/TextView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="詳細を見たい記録をタップします。"
@@ -158,7 +159,6 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/imageView4"
                 android:layout_width="250dp"
                 android:layout_height="260dp"
                 android:layout_gravity="center_horizontal"
@@ -171,7 +171,6 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/TextView09"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="5. "
@@ -179,7 +178,6 @@
                     android:textColor="@color/right_gray" />
 
                 <TextView
-                    android:id="@+id/TextView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="詳細が表示されます。"
@@ -188,7 +186,6 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/imageView4"
                 android:layout_width="250dp"
                 android:layout_height="320dp"
                 android:layout_gravity="center_horizontal"
@@ -197,26 +194,5 @@
                 android:background="@drawable/guide5" />
         </LinearLayout>
     </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dip"
-        android:layout_alignParentTop="true"
-        android:background="@color/header" >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp" >
-
-            <Button
-                android:id="@+id/buttonClose"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/icon_close" />
-        </LinearLayout>
-    </RelativeLayout>
 
 </RelativeLayout>

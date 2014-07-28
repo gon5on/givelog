@@ -79,7 +79,7 @@ public class PresentDao
                 PersonEntity person = persons.get(j);
 
                 //あげた
-                if (person.getType() == Config.GIVE_FLG) {
+                if (person.getType() == Config.GIVE_TYPE) {
                     presents.get(i).setGive(person.getName());
                 }
                 //もらった

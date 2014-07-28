@@ -1,17 +1,16 @@
 package jp.co.e2.givelog.activity;
 
-import java.io.File;
 import java.io.IOException;
 
 import jp.co.e2.givelog.R;
 import jp.co.e2.givelog.common.ImgUtils;
 import jp.co.e2.givelog.common.MediaUtils;
 import jp.co.e2.givelog.config.Config;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.Images;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,7 +19,7 @@ import android.widget.Button;
  * 
  * @access public
  */
-public class BaseActivity extends Activity
+public class BaseActivity extends FragmentActivity
 {
     /**
      * onCreate
@@ -62,54 +61,52 @@ public class BaseActivity extends Activity
      * @param Uri uri 画像URI
      * @param String prefix プレフィックス
      * @return void
+     * @throws IOException
      * @access public
      */
-    public void saveImg(Integer id, Integer photo, Uri uri, String prefix)
+    public void saveImg(Integer id, Integer photo, Uri uri, Integer prefixFlg) throws IOException
     {
-        String fileName = prefix + "_" + id + ".jpg";
+        String fileDir = Config.getImgDirPath(getApplicationContext());
+        String fileName = Config.getImgFileName(prefixFlg, id);
 
         //画像保存
         if (uri != null) {
             ImgUtils imgUtils = new ImgUtils(getApplicationContext(), uri);
-            imgUtils.saveResizeImg(file_dir, file_name, Config.RESIZE_HEIGHT, Config.RESIZE_WIDTH);
+            imgUtils.saveResizeImg(fileDir, fileName, Config.RESIZE_HEIGHT, Config.RESIZE_WIDTH);
         }
         //画像削除
         else if (photo != 1) {
-            File file = new File(file_dir + "/" + file_name);
-            if (file.exists() == true) {
-                file.delete();
-            }
+            MediaUtils.deleteDirFile(fileDir + "/" + fileName);
         }
     }
 
     /**
      * 画像削除
      * 
-     * @param Integer id プレゼントID/人物ID
-     * @param String prefix プレフィックス
+     * @param Integer id プレゼントID/メンバーID
+     * @param Integer imgFlg プレゼント画像フラグ/メンバー画像フラグ
      * @return void
      * @access public
      */
-    public void deleteImg(Integer id, String prefix)
+    public void deleteImg(Integer id, Integer imgFlg)
     {
-        String file_name = prefix + "_" + id + ".jpg";
+        String fileDir = Config.getImgDirPath(getApplicationContext());
+        String fileName = Config.getImgFileName(imgFlg, id);
 
-        File file = new File(file_dir + "/" + file_name);
-        if (file.exists() == true) {
-            file.delete();
-        }
+        MediaUtils.deleteDirFile(fileDir + "/" + fileName);
     }
 
     /**
      * 一時画像保存Uriを取得
      * 
      * @return Uri uri 一時保存ディレクトリのURI
+     * @throws IOException
      * @access public
      */
-    public Uri getTmpPhotoUri()
+    public Uri getTmpPhotoUri() throws IOException
     {
         String file_name = System.currentTimeMillis() + ".jpg";
-        String path = Config.getTmpFileDirPath() + "/" + file_name;
+        String path = Config.getImgTmpDirPath(getApplicationContext()) + "/" + file_name;
 
         ContentValues values = new ContentValues();
         values.put(Images.Media.DISPLAY_NAME, file_name);

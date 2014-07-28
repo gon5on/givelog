@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * 
  * @access public
  */
-public class DBOpenHelper extends SQLiteOpenHelper
+public class BaseSQLiteOpenHelper extends SQLiteOpenHelper
 {
     private Context mContext;       //コンテキスト
 
@@ -23,7 +23,7 @@ public class DBOpenHelper extends SQLiteOpenHelper
      * @param Context context コンテキスト
      * @access public
      */
-    public DBOpenHelper(Context context)
+    public BaseSQLiteOpenHelper(Context context)
     {
         super(context, Config.DATABASE_NAME, null, 1);
 

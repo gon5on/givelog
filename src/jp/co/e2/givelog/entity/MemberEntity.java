@@ -1,5 +1,6 @@
 package jp.co.e2.givelog.entity;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -8,7 +9,7 @@ import java.util.Date;
  * 
  * @access public
  */
-public class MemberEntity
+public class MemberEntity implements Serializable
 {
     //値
     private Integer mId;

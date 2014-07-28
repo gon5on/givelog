@@ -79,7 +79,7 @@ public class PresentAddActivity extends BaseActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_present_add);
+		setContentView(R.layout.fragment_present_add);
 
 		//初期化
 		setNull();

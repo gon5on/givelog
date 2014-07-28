@@ -6,13 +6,27 @@
     android:minWidth="290dip"
     android:orientation="vertical" >
 
+    <RelativeLayout
+        android:id="@+id/relativeLayoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:background="@color/header" >
+
+        <Button
+            android:id="@+id/buttonClose"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/icon_close" />
+    </RelativeLayout>
+
     <ScrollView
-        android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp" >
-
-        <LinearLayout
+        android:layout_below="@+id/relativeLayoutHeader" >
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -31,7 +45,6 @@
                 android:textSize="20sp" />
 
             <View
-                android:id="@+id/view1"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@drawable/style_dash_line" />
@@ -48,7 +61,6 @@
                 android:textSize="20sp" />
 
             <View
-                android:id="@+id/View01"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@drawable/style_dash_line" />
@@ -65,26 +77,5 @@
                 android:textSize="20sp" />
         </LinearLayout>
     </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dip"
-        android:layout_alignParentTop="true"
-        android:background="@color/header" >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp" >
-
-            <Button
-                android:id="@+id/buttonClose"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/icon_close" />
-        </LinearLayout>
-    </RelativeLayout>
 
 </RelativeLayout>

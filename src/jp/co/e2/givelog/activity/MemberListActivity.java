@@ -8,12 +8,15 @@ import jp.co.e2.givelog.common.PrefarenceUtils;
 import jp.co.e2.givelog.config.Config;
 import jp.co.e2.givelog.dialog.GuideDialog;
 import jp.co.e2.givelog.entity.MemberEntity;
+import jp.co.e2.givelog.model.BaseSQLiteOpenHelper;
 import jp.co.e2.givelog.model.MemberDao;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -29,60 +32,19 @@ public class MemberListActivity extends BaseActivity
      * 
      * @param Bundle savedInstanceState
      * @return void
-     * @access public
+     * @access protected
      */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_member_list);
+        setContentView(R.layout.activity_back_btn);
 
-        //ヘッダのボタンセット
-        setHeaderButton();
+        if (savedInstanceState == null) {
+            setHeaderButton();            //ヘッダのボタンセット
 
-        //初回起動判定
-        if (PrefarenceUtils.get(getApplicationContext(), Config.TWICE_FLAG, 0) == 0) {
-            new GuideDialog(this).show();
-            PrefarenceUtils.save(getApplicationContext(), Config.TWICE_FLAG, 1);
+            getSupportFragmentManager().beginTransaction().add(R.id.container, new MemberListFragment()).commit();
         }
-    }
-
-    /**
-     * onResume
-     * 
-     * @return void
-     * @access public
-     */
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-
-        //人物一覧
-        SQLiteDatabase db = helper.getWritableDatabase();
-        MemberDao memberDao = new MemberDao();
-        ArrayList<MemberEntity> memberList = memberDao.selectMemberList(db);
-        db.close();
-
-        //アダプターをセット
-        ListView listViewMember = (ListView) findViewById(R.id.listViewMember);
-        MemberListAdapter adapter = new MemberListAdapter(this, R.layout.part_member_list, memberList);
-        listViewMember.setAdapter(adapter);
-
-        //背景画像消える対策
-        listViewMember.setScrollingCacheEnabled(false);
-
-        //イベント
-        listViewMember.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ListView listView = (ListView) parent;
-                MemberEntity item = (MemberEntity) listView.getAdapter().getItem(position);
-
-                Intent i = new Intent(getApplicationContext(), MemberDetailActivity.class);
-                i.putExtra("ID", item.getId());
-                startActivity(i);
-            }
-        });
     }
 
     /**
@@ -123,5 +85,89 @@ public class MemberListActivity extends BaseActivity
                 startActivity(i);
             }
         });
+    }
+
+    /**
+     * MemberListFragment
+     * 
+     * @access public
+     */
+    public static class MemberListFragment extends Fragment
+    {
+        private View mView = null;
+        private ArrayList<MemberEntity> mMemberList;        //メンバー一覧
+
+        /**
+         * onCreateView
+         * 
+         * @param LayoutInflater inflater
+         * @param ViewGroup container
+         * @param Bundle savedInstanceState
+         * @return View
+         * @access public
+         */
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+
+            // fragment再生成抑止
+            setRetainInstance(true);
+
+            mView = inflater.inflate(R.layout.fragment_listview, container, false);
+
+            //初回起動判定
+            if (PrefarenceUtils.get(getActivity().getApplicationContext(), Config.TWICE_FLAG, 0) == 0) {
+                new GuideDialog(this).show();
+                PrefarenceUtils.save(getActivity().getApplicationContext(), Config.TWICE_FLAG, 1);
+            }
+
+            //メンバー一覧取得
+            getMemberList();
+        }
+
+        /**
+         * onResume
+         * 
+         * @return void
+         * @access public
+         */
+        @Override
+        public void onResume()
+        {
+            super.onResume();
+
+            //アダプターをセット
+            ListView listViewMember = (ListView) mView.findViewById(R.id.listView);
+            MemberListAdapter adapter = new MemberListAdapter(getActivity(), mMemberList);
+            listViewMember.setAdapter(adapter);
+
+            //背景画像消える対策
+            listViewMember.setScrollingCacheEnabled(false);
+        }
+
+        /**
+         * メンバー一覧を取得
+         * 
+         * @return void
+         * @access private
+         */
+        private void getMemberList()
+        {
+            SQLiteDatabase db = null;
+
+            try {
+                BaseSQLiteOpenHelper helper = new BaseSQLiteOpenHelper(getActivity().getApplicationContext());
+                db = helper.getWritableDatabase();
+
+                MemberDao memberDao = new MemberDao();
+                mMemberList = memberDao.selectMemberList(db);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                db.close();
+            }
+        }
     }
 }

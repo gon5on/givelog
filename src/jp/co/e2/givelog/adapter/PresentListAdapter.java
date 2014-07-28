@@ -8,7 +8,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 /**
@@ -16,69 +16,96 @@ import android.widget.TextView;
  * 
  * @access public
  */
-public class PresentListAdapter extends ArrayAdapter<PresentEntity>
+public class PresentListAdapter extends BaseAdapter
 {
-	private LayoutInflater inflater;
-	private View convertView;
+    private LayoutInflater mInflater;
+    private ArrayList<PresentEntity> mData;         //プレゼントデータ
+    private Integer mType = 1;                      //だれからだれへフラグ
 
-	private Integer type = 1;					//だれからだれへフラグ
+    /**
+     * コンストラクタ
+     * 
+     * @param Context context
+     * @param Integer layoutId
+     * @param List<Member> data
+     * @param Integer type だれからだれへフラグ
+     */
+    public PresentListAdapter(Context context, ArrayList<PresentEntity> data, Integer type)
+    {
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mData = data;
+        mType = type;
+    }
 
-	/**
-	 * コンストラクタ
-	 * 
-	 * @param Context contex
-	 * @param Integer layoutId
-	 * @param List<Member> objects
-	 */
-	public PresentListAdapter(Context context, int layoutId, ArrayList<PresentEntity> objects)
-	{
-		super(context, 0, objects);
-		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
+    /**
+     * getView
+     * 
+     * @param int position
+     * @param View convertView
+     * @param ViewGroup parent
+     * @return View convertView
+     * @access public
+     */
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
+        // 特定の行(position)のデータを得る
+        PresentEntity item = (PresentEntity) mData.get(position);
 
-	/**
-	 * getView
-	 * 
-	 * @param int position
-	 * @param View convertView
-	 * @params ViewGroup parent
-	 * @return View convertView
-	 * @access public
-	 */
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent)
-	{
-		// 特定の行(position)のデータを得る
-		PresentEntity item = getItem(position);
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.part_present_list, null);
+        }
 
-		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.part_present_list, null);
-		}
+        //日付
+        TextView textViewDate = (TextView) convertView.findViewById(R.id.textViewDate);
+        textViewDate.setText(item.getDate());
 
-		//日付
-		TextView textViewDate = (TextView) convertView.findViewById(R.id.textViewDate);
-		textViewDate.setText(item.getDate());
+        //イベント
+        TextView textViewEvent = (TextView) convertView.findViewById(R.id.textViewEvent);
+        textViewEvent.setText(item.getEvent());
 
-		//イベント
-		TextView textViewEvent = (TextView) convertView.findViewById(R.id.textViewEvent);
-		textViewEvent.setText(item.getEvent());
+        //だれからだれへと品物
+        TextView textViewPresent = (TextView) convertView.findViewById(R.id.textViewPresent);
+        textViewPresent.setText(item.getPresentForList(mType));
 
-		//だれからだれへと品物
-		TextView textViewPresent = (TextView) convertView.findViewById(R.id.textViewPresent);
-		textViewPresent.setText(item.getPresentForList(type));
+        return convertView;
+    }
 
-		return convertView;
-	}
+    /**
+     * getCount
+     * 
+     * @return Integer
+     * @access public
+     */
+    @Override
+    public int getCount()
+    {
+        return mData.size();
+    }
 
-	/**
-	 * だれからだれへフラグをセット
-	 * 
-	 * @param Integer value
-	 * @return void
-	 * @access public
-	 */
-	public void setType(int value)
-	{
-		type = value;
-	}
+    /**
+     * getItem
+     * 
+     * @param int position
+     * @return Integer
+     * @access public
+     */
+    @Override
+    public Object getItem(int position)
+    {
+        return mData.get(position);
+    }
+
+    /**
+     * getItemId
+     * 
+     * @param int position
+     * @return Integer
+     * @access public
+     */
+    @Override
+    public long getItemId(int position)
+    {
+        return mData.get(position).getId();
+    }
 }
